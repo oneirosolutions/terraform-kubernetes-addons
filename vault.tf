@@ -175,7 +175,6 @@ resource "tls_private_key" "vault-tls-client-key" {
 
 resource "tls_cert_request" "vault-tls-client-csr" {
   count           = local.vault["generate_ca"] ? 1 : 0
-  key_algorithm   = "ECDSA"
   private_key_pem = tls_private_key.vault-tls-client-key[count.index].private_key_pem
 
   subject {

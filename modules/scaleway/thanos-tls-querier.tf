@@ -135,7 +135,6 @@ resource "tls_private_key" "thanos-tls-querier-cert-key" {
 
 resource "tls_cert_request" "thanos-tls-querier-cert-csr" {
   for_each        = { for k, v in local.thanos-tls-querier : k => v if v["enabled"] && v["generate_cert"] }
-  key_algorithm   = "ECDSA"
   private_key_pem = tls_private_key.thanos-tls-querier-cert-key[each.key].private_key_pem
 
   subject {
