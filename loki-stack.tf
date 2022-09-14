@@ -219,7 +219,6 @@ resource "tls_cert_request" "promtail-csr" {
 resource "tls_locally_signed_cert" "promtail-cert" {
   count              = local.loki-stack["enabled"] && local.loki-stack["generate_ca"] && local.loki-stack["create_promtail_cert"] ? 1 : 0
   cert_request_pem   = tls_cert_request.promtail-csr[count.index].cert_request_pem
-  ca_key_algorithm   = "ECDSA"
   ca_private_key_pem = tls_private_key.loki-stack-ca-key[count.index].private_key_pem
   ca_cert_pem        = tls_self_signed_cert.loki-stack-ca-cert[count.index].cert_pem
 
