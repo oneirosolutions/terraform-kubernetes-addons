@@ -152,7 +152,6 @@ resource "tls_private_key" "vault-tls-ca-key" {
 
 resource "tls_self_signed_cert" "vault-tls-ca-cert" {
   count             = local.vault["generate_ca"] ? 1 : 0
-  key_algorithm     = "ECDSA"
   private_key_pem   = tls_private_key.vault-tls-ca-key[0].private_key_pem
   is_ca_certificate = true
 

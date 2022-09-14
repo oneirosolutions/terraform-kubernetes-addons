@@ -103,7 +103,6 @@ resource "tls_private_key" "loki-stack-ca-key" {
 
 resource "tls_self_signed_cert" "loki-stack-ca-cert" {
   count             = local.loki-stack["enabled"] && local.loki-stack["generate_ca"] ? 1 : 0
-  key_algorithm     = "ECDSA"
   private_key_pem   = tls_private_key.loki-stack-ca-key[0].private_key_pem
   is_ca_certificate = true
 
