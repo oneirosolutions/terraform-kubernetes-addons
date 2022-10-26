@@ -168,6 +168,32 @@ grafana:
         url: https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/grafana/dashboards/nginx.json
 VALUES
 
+  values_dashboard_cockroachdb-change-feeds = <<VALUES
+grafana:
+  dashboards:
+    default:
+      cockroachdb-change-feeds:
+        url: https://raw.githubusercontent.com/cockroachdb/cockroach/master/monitoring/grafana-dashboards/changefeeds.json
+      cockroachdb-distributed:
+        url: https://raw.githubusercontent.com/cockroachdb/cockroach/master/monitoring/grafana-dashboards/distributed.json
+      cockroachdb-hardware:
+        url: https://raw.githubusercontent.com/cockroachdb/cockroach/master/monitoring/grafana-dashboards/hardware.json
+      cockroachdb-overview:
+        url: https://raw.githubusercontent.com/cockroachdb/cockroach/master/monitoring/grafana-dashboards/overview.json
+      cockroachdb-queues:
+        url: https://raw.githubusercontent.com/cockroachdb/cockroach/master/monitoring/grafana-dashboards/queues.json
+      cockroachdb-replication:
+        url: https://raw.githubusercontent.com/cockroachdb/cockroach/master/monitoring/grafana-dashboards/replication.json
+      cockroachdb-runtime:
+        url: https://raw.githubusercontent.com/cockroachdb/cockroach/master/monitoring/grafana-dashboards/runtime.json
+      cockroachdb-slow_request:
+        url: https://raw.githubusercontent.com/cockroachdb/cockroach/master/monitoring/grafana-dashboards/slow_request.json
+      cockroachdb-sql:
+        url: https://raw.githubusercontent.com/cockroachdb/cockroach/master/monitoring/grafana-dashboards/sql.json
+      cockroachdb-storage:
+        url: https://raw.githubusercontent.com/cockroachdb/cockroach/master/monitoring/grafana-dashboards/storage.json
+VALUES
+
   values_dashboard_cluster-autoscaler = <<VALUES
 grafana:
   dashboards:
@@ -469,6 +495,7 @@ resource "helm_release" "kube-prometheus-stack" {
     local.ingress-nginx["enabled"] ? local.values_dashboard_ingress-nginx : null,
     local.thanos["enabled"] ? local.values_dashboard_thanos : null,
     local.values_dashboard_node_exporter,
+    local.values_dashboard_cockroachdb-change-feeds,
     local.kube-prometheus-stack["thanos_sidecar_enabled"] ? local.values_thanos_sidecar : null,
     local.kube-prometheus-stack["thanos_sidecar_enabled"] ? local.values_grafana_ds : null,
     local.kube-prometheus-stack["default_global_requests"] ? local.values_kps_global_requests : null,

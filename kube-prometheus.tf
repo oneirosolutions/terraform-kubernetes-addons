@@ -66,6 +66,32 @@ grafana:
         url: https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/grafana/dashboards/nginx.json
 VALUES
 
+  values_dashboard_cockroachdb-change-feeds = <<VALUES
+grafana:
+  dashboards:
+    default:
+      cockroachdb-change-feeds:
+        url: https://raw.githubusercontent.com/cockroachdb/cockroach/master/monitoring/grafana-dashboards/changefeeds.json
+      cockroachdb-distributed:
+        url: https://raw.githubusercontent.com/cockroachdb/cockroach/master/monitoring/grafana-dashboards/distributed.json
+      cockroachdb-hardware:
+        url: https://raw.githubusercontent.com/cockroachdb/cockroach/master/monitoring/grafana-dashboards/hardware.json
+      cockroachdb-overview:
+        url: https://raw.githubusercontent.com/cockroachdb/cockroach/master/monitoring/grafana-dashboards/overview.json
+      cockroachdb-queues:
+        url: https://raw.githubusercontent.com/cockroachdb/cockroach/master/monitoring/grafana-dashboards/queues.json
+      cockroachdb-replication:
+        url: https://raw.githubusercontent.com/cockroachdb/cockroach/master/monitoring/grafana-dashboards/replication.json
+      cockroachdb-runtime:
+        url: https://raw.githubusercontent.com/cockroachdb/cockroach/master/monitoring/grafana-dashboards/runtime.json
+      cockroachdb-slow_request:
+        url: https://raw.githubusercontent.com/cockroachdb/cockroach/master/monitoring/grafana-dashboards/slow_request.json
+      cockroachdb-sql:
+        url: https://raw.githubusercontent.com/cockroachdb/cockroach/master/monitoring/grafana-dashboards/sql.json
+      cockroachdb-storage:
+        url: https://raw.githubusercontent.com/cockroachdb/cockroach/master/monitoring/grafana-dashboards/storage.json
+VALUES
+
   values_dashboard_cert-manager = <<VALUES
 grafana:
   dashboards:
@@ -138,6 +164,7 @@ resource "helm_release" "kube-prometheus-stack" {
     local.kong["enabled"] ? local.values_dashboard_kong : null,
     local.cert-manager["enabled"] ? local.values_dashboard_cert-manager : null,
     local.ingress-nginx["enabled"] ? local.values_dashboard_ingress-nginx : null,
+    local.values_dashboard_cockroachdb-change-feeds,
     local.values_dashboard_node_exporter
   ])
   namespace = kubernetes_namespace.kube-prometheus-stack.*.metadata.0.name[count.index]

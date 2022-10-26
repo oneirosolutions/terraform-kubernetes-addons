@@ -28,6 +28,19 @@ variable "cluster-name" {
   type        = string
 }
 
+variable "cockroachdb" {
+  description = "Name of the cockroachdb"
+  default     = {}
+  type        = any
+}
+
+variable "cockroach-operator" {
+  description = "Name of the cockroach-operator cluster"
+  default     = {}
+  type        = any
+}
+
+
 variable "csi-external-snapshotter" {
   description = "Customize csi-external-snapshotter, see `csi-external-snapshotter.tf` for supported values"
   type        = any
