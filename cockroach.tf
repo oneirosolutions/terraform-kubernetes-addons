@@ -20,6 +20,8 @@ resource "kubectl_manifest" "cockroachdb_deployment" {
     # this translates to the name of the statefulset that is created
     name: cockroachdb
   spec:
+    clientTLSSecret: cockroachdb.client.root
+    nodeTLSSecret: cockroachdb.node    
     dataStore:
       pvc:
         spec:
