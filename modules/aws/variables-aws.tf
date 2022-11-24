@@ -10,6 +10,12 @@ variable "aws" {
   default     = {}
 }
 
+variable "aws-acm" {
+  description = "AWS Certificate Manager"
+  type        = any
+  default     = {}
+}
+
 variable "aws-ebs-csi-driver" {
   description = "Customize aws-ebs-csi-driver helm chart, see `aws-ebs-csi-driver.tf`"
   type        = any
@@ -36,6 +42,12 @@ variable "aws-load-balancer-controller" {
 
 variable "aws-node-termination-handler" {
   description = "Customize aws-node-termination-handler chart, see `aws-node-termination-handler.tf`"
+  type        = any
+  default     = {}
+}
+
+variable "aws-wafv2" {
+  description = "AWS Web Application Firewall"
   type        = any
   default     = {}
 }
