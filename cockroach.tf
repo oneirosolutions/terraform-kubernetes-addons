@@ -2,8 +2,11 @@ locals {
 
   cockroachdb = merge(
     {
-      enabled = false
-      version = "v2.8.0"
+      enabled                  = false
+      version                  = "v22.1.2"
+      resource_request_memory  = "2Gi"
+      resource_limit_memory    = "4Gi"
+      node_size                = "3"
     },
     var.cockroachdb
   )
@@ -20,8 +23,8 @@ resource "kubectl_manifest" "cockroachdb_deployment" {
     # this translates to the name of the statefulset that is created
     name: cockroachdb
   spec:
-    clientTLSSecret: cockroachdb.client.root
-    nodeTLSSecret: cockroachdb.node    
+    # clientTLSSecret: cockroachdb.client.root
+    # nodeTLSSecret: cockroachdb.node
     dataStore:
       pvc:
         spec:
@@ -38,15 +41,15 @@ resource "kubectl_manifest" "cockroachdb_deployment" {
         memory: 2Gi
       limits:
         cpu: 2
-        memory: 8Gi
+        memory: ${local.cockroachdb.resource_limit_memory}
     tlsEnabled: true
   # You can set either a version of the db or a specific image name
-  # cockroachDBVersion: v22.1.2
-    image:
-      name: cockroachdb/cockroach:v22.1.2
+    cockroachDBVersion: ${local.cockroachdb.version}
+    #image:
+    #  name: cockroachdb/cockroach:${local.cockroachdb.version}
     # nodes refers to the number of crdb pods that are created
     # via the statefulset
-    nodes: 3
+    nodes: ${local.cockroachdb.node_size}
     additionalLabels:
       crdb: is-cool
     # affinity is a new API field that is behind a feature gate that is

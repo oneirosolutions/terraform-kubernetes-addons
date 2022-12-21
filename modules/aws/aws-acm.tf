@@ -23,7 +23,7 @@ locals {
     },
     var.aws-acm
   )
-    lb_name               = split("-", split(".", kubernetes_ingress_v1.backend_ingress.status.0.load_balancer.0.ingress.0.hostname).0).0
+#    lb_name               = split("-", split(".", kubernetes_ingress_v1.backend_ingress[count.index].status.0.load_balancer.0.ingress.0.hostname).0).0
 
 }
 
@@ -237,28 +237,37 @@ data "aws_route53_zone" "dlx_digital" {
  
 # }
 
+# resource "aws_route53_record" "dlx" {
+#   for_each = {
+#     for dvo in aws_acm_certificate.dlx[count.index].domain_validation_options : dvo.domain_name => {
+#       name    = dvo.resource_record_name
+#       record  = dvo.resource_record_value
+#       type    = dvo.resource_record_type
+#       zone_id = data.aws_route53_zone.dlx_digital.zone_id
+#     }
+#   }
+
+#   allow_overwrite = true
+#   name            = each.value.name
+#   records         = [each.value.record]
+#   ttl             = 60
+#   type            = each.value.type
+#   zone_id         = each.value.zone_id
+# }
+
 resource "aws_route53_record" "dlx" {
   count = local.aws-acm["enabled"] ? 1 : 0
-  for_each = {
-    for dvo in aws_acm_certificate.dlx.domain_validation_options : dvo.domain_name => {
-      name    = dvo.resource_record_name
-      record  = dvo.resource_record_value
-      type    = dvo.resource_record_type
-      zone_id = data.aws_route53_zone.dlx_digital.zone_id
-    }
-  }
-
   allow_overwrite = true
-  name            = each.value.name
-  records         = [each.value.record]
-  ttl             = 60
-  type            = each.value.type
-  zone_id         = each.value.zone_id
+  name =  tolist(aws_acm_certificate.dlx[count.index].domain_validation_options)[0].resource_record_name
+  records = [tolist(aws_acm_certificate.dlx[count.index].domain_validation_options)[0].resource_record_value]
+  type = tolist(aws_acm_certificate.dlx[count.index].domain_validation_options)[0].resource_record_type
+  zone_id = data.aws_route53_zone.dlx_digital.zone_id
+  ttl = 60
 }
 
 resource "aws_acm_certificate_validation" "dlx" {
   count = local.aws-acm["enabled"] ? 1 : 0
-  certificate_arn         = aws_acm_certificate.dlx.arn
+  certificate_arn         = aws_acm_certificate.dlx[count.index].arn
   validation_record_fqdns = [for record in aws_route53_record.dlx : record.fqdn]
 }
 
