@@ -228,6 +228,7 @@ resource "aws_acm_certificate" "dlx" {
 }
 
 data "aws_route53_zone" "dlx_digital" {
+  count = local.aws-acm["enabled"] ? 1 : 0
   name         = local.aws-acm.zone_name
   private_zone = false
 }
@@ -261,7 +262,7 @@ resource "aws_route53_record" "dlx" {
   name =  tolist(aws_acm_certificate.dlx[count.index].domain_validation_options)[0].resource_record_name
   records = [tolist(aws_acm_certificate.dlx[count.index].domain_validation_options)[0].resource_record_value]
   type = tolist(aws_acm_certificate.dlx[count.index].domain_validation_options)[0].resource_record_type
-  zone_id = data.aws_route53_zone.dlx_digital.zone_id
+  zone_id = data.aws_route53_zone.dlx_digital[0].zone_id
   ttl = 60
 }
 
@@ -283,16 +284,16 @@ resource "aws_acm_certificate_validation" "dlx" {
 #   name         = "backend-lb-tg"
 # }
 
-data "aws_vpc" "main" {
- filter {
-     name = "tag:Name"
-     values =[local.aws-acm.vpc_name]
-   }
-}
+# data "aws_vpc" "main" {
+#  filter {
+#      name = "tag:Name"
+#      values =[local.aws-acm.vpc_name]
+#    }
+# }
 
-output "data_vpc_name" {
-  value = data.aws_vpc.main.id
-}
+# output "data_vpc_name" {
+#   value = data.aws_vpc.main.id
+# }
 
 /* resource "aws_lb_listener" "dlx" {
   port = "443"
