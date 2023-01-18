@@ -77,6 +77,18 @@ variable "istio-operator" {
   default     = {}
 }
 
+variable "jaeger" {
+  description = "Customize jaeger deployment, see `jaeger.tf` for supported values"
+  type        = any
+  default     = {}
+}
+
+variable "jaeger-operator" {
+  description = "Customize jaeger operator deployment, see `jaeger-operator.tf` for supported values"
+  type        = any
+  default     = {}
+}
+
 variable "k8gb" {
   description = "Customize k8gb chart, see `k8gb.tf` for supported values"
   type        = any
