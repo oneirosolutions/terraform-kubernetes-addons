@@ -4,7 +4,7 @@ locals {
     {
       enabled                    = false
       zone_name                  = ""
-      domain_name                = ""
+      domain_name                = [""]
       load_balancer_arn          = ""
       target_group_name          = ""
       backend_service_name       = "backend-lb"
@@ -19,7 +19,7 @@ locals {
       ingress_label_pod_name     = ""
       ingress_label_fe_app       = ""
       ingress_label_fe_pod_name  = ""
-      namespace                  = ""
+      namespace                  = [""]
       
     },
     var.aws-acm-extended
@@ -28,12 +28,13 @@ locals {
 
 }
 
+//  count = length(flatten(local.aws-acm-extended.*.namespace))
 resource "kubernetes_ingress_v1" "backend_ingress_extended" {
-  count = local.aws-acm-extended["enabled"] ? 1 : 0
+  count = local.aws-acm-extended["enabled"] ? length(flatten(local.aws-acm-extended.*.namespace)) : 0
   wait_for_load_balancer = true
   metadata {
     name = "backend-ingress"
-    namespace = local.aws-acm-extended.namespace
+    namespace = flatten(local.aws-acm-extended.*.namespace)[count.index]
     annotations = {
       "alb.ingress.kubernetes.io/scheme": "internet-facing"
       "alb.ingress.kubernetes.io/listen-ports": "[{\"HTTP\": 80}, {\"HTTPS\": 443}]"
@@ -59,7 +60,7 @@ JSON
   spec {
     ingress_class_name = "alb"
     rule {
-      host = "${local.aws-acm-extended.backend_host_prefix}.${local.aws-acm-extended.domain_name}"
+      host = "${local.aws-acm-extended.backend_host_prefix}.${flatten(local.aws-acm-extended.*.domain_name)[count.index]}"
       http {
         path {
           backend {
@@ -92,16 +93,16 @@ JSON
     }
 
     tls {
-      hosts = ["${local.aws-acm-extended.backend_host_prefix}.${local.aws-acm-extended.domain_name}"]
+      hosts = ["${local.aws-acm-extended.backend_host_prefix}.${flatten(local.aws-acm-extended.*.domain_name)[count.index]}"]
     }
   }
 }
-
+/*
 resource "kubernetes_service" "backend-extended" {
-  count = local.aws-acm-extended["enabled"] ? 1 : 0
+  count = length(flatten(local.aws-acm-extended.*.namespace))
   metadata {
     name = local.aws-acm-extended.backend_service_name
-    namespace = local.aws-acm-extended.namespace
+    namespace = flatten(local.aws-acm-extended.*.namespace)[count.index]
     labels = {
       "app.kubernetes.io/instance" : local.aws-acm-extended.ingress_label_app
       "app.kubernetes.io/name" : local.aws-acm-extended.ingress_label_pod_name
@@ -122,11 +123,11 @@ resource "kubernetes_service" "backend-extended" {
 }
 
 resource "kubernetes_ingress_v1" "frontend_ingress_extended" {
-  count = local.aws-acm-extended["enabled"] ? 1 : 0
+  count = length(flatten(local.aws-acm-extended.*.namespace))
   wait_for_load_balancer = true
   metadata {
     name = "frontend-ingress"
-    namespace = local.aws-acm-extended.namespace
+    namespace = flatten(local.aws-acm-extended.*.namespace)[count.index]
     annotations = {
       "alb.ingress.kubernetes.io/scheme": "internet-facing"
       "alb.ingress.kubernetes.io/listen-ports": "[{\"HTTP\": 80}, {\"HTTPS\": 443}]"
@@ -152,7 +153,7 @@ JSON
   spec {
     ingress_class_name = "alb"
     rule {
-      host = local.aws-acm-extended.domain_name
+      host = flatten(local.aws-acm-extended.*.domain_name)[count.index]
       http {
         path {
           backend {
@@ -185,16 +186,16 @@ JSON
     }
 
     tls {
-      hosts = ["${local.aws-acm-extended.domain_name}"]
+      hosts = ["${flatten(local.aws-acm-extended.*.domain_name)[count.index]}"]
     }
   }
 }
 
 resource "kubernetes_service" "frontend_extended" {
-  count = local.aws-acm-extended["enabled"] ? 1 : 0
+  count = length(flatten(local.aws-acm-extended.*.namespace))
   metadata {
     name = local.aws-acm-extended.frontend_service_name
-    namespace = local.aws-acm-extended.namespace
+    namespace = flatten(local.aws-acm-extended.*.namespace)[count.index]
     labels = {
       "app.kubernetes.io/instance" : local.aws-acm-extended.ingress_label_fe_app
       "app.kubernetes.io/name" : local.aws-acm-extended.ingress_label_fe_pod_name
@@ -214,52 +215,19 @@ resource "kubernetes_service" "frontend_extended" {
   }
 }
 
-
-# data "aws_lb" "backend" {
-#   tags = {
-#     "ingress.k8s.aws/stack" = "default/backend-ingress"
-#   }
-# }
-
-# output "load_balancer_name" {
-#   value = data.aws_lb.backend
-# }
-
+#count = can(local.aws-acm-extended["enabled"] ? 1 : 0)?  length(local.aws-acm-extended.domain_name):0
 resource "aws_acm_certificate" "dlx_extended" {
-  count = local.aws-acm-extended["enabled"] ? 1 : 0
-  domain_name               = local.aws-acm-extended.domain_name
-  subject_alternative_names = ["*.${local.aws-acm-extended.domain_name}"]
+  count = length(flatten(local.aws-acm-extended.*.domain_name))
+  domain_name               = flatten(local.aws-acm-extended.*.domain_name)[count.index]
+  subject_alternative_names = ["*.${flatten(local.aws-acm-extended.*.domain_name)[count.index]}"]
   validation_method         = "DNS"
 }
 
 data "aws_route53_zone" "dlx_digital_extended" {
-  count = local.aws-acm-extended["enabled"] ? 1 : 0
+  count =  local.aws-acm-extended["enabled"] ? 1 : 0
   name         = local.aws-acm-extended.zone_name
   private_zone = false
 }
-
-# data "aws_lb_target_group" "backend_target_group" {
-#   name         = local.aws-acm-extended.target_group_name
- 
-# }
-
-# resource "aws_route53_record" "dlx_extended" {
-#   for_each = {
-#     for dvo in aws_acm_certificate.dlx_extended[count.index].domain_validation_options : dvo.domain_name => {
-#       name    = dvo.resource_record_name
-#       record  = dvo.resource_record_value
-#       type    = dvo.resource_record_type
-#       zone_id = data.aws_route53_zone.dlx_digital_extended.zone_id
-#     }
-#   }
-
-#   allow_overwrite = true
-#   name            = each.value.name
-#   records         = [each.value.record]
-#   ttl             = 60
-#   type            = each.value.type
-#   zone_id         = each.value.zone_id
-# }
 
 resource "aws_route53_record" "dlx_extended" {
   count = local.aws-acm-extended["enabled"] ? 1 : 0
@@ -276,3 +244,4 @@ resource "aws_acm_certificate_validation" "dlx_extended" {
   certificate_arn         = aws_acm_certificate.dlx_extended[count.index].arn
   validation_record_fqdns = [for record in aws_route53_record.dlx_extended : record.fqdn]
 }
+*/
