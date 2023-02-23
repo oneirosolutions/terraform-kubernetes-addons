@@ -1,1 +1,1 @@
-keycloak-operator-crd.tf
+../../keycloak-operator-crd.tf
