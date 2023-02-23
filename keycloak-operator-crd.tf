@@ -11,7 +11,7 @@ locals {
 
   keycloak-operator_yaml_files = [
     "https://raw.githubusercontent.com/keycloak/keycloak-k8s-resources/${local.keycloak-operator.crd_version}/kubernetes/keycloaks.k8s.keycloak.org-v1.yml",
-    "https://raw.githubusercontent.com/keycloak/keycloak-k8s-resources/${local.keycloak-operator.crd_version}/kubernetes/keycloakrealmimports.k8s.keycloak.org-v1.yml"
+    "https://raw.githubusercontent.com/keycloak/keycloak-k8s-resources/${local.keycloak-operator.crd_version}/kubernetes/keycloakrealmimports.k8s.keycloak.org-v1.yml",
     "https://raw.githubusercontent.com/keycloak/keycloak-k8s-resources/${local.keycloak-operator.version}/kubernetes/kubernetes.yml"
   ]
 
