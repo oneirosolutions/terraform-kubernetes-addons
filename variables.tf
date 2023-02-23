@@ -107,7 +107,19 @@ variable "keda" {
   default     = {}
 }
 
+variable "keycloak-operator" {
+  description = "Customize keycloak chart, see `keycloak.tf` for supported values"
+  type        = any
+  default     = {}
+}
+
 variable "keycloak" {
+  description = "Customize keycloak chart, see `keycloak.tf` for supported values"
+  type        = any
+  default     = {}
+}
+
+variable "keycloakRealmImport" {
   description = "Customize keycloak chart, see `keycloak.tf` for supported values"
   type        = any
   default     = {}
