@@ -4,7 +4,7 @@ locals {
     {
       enabled                  = false
       version                  = "v20.0.5"
-      tls_secret                = "example-tls-secret"
+      tls_secret               = "example-tls-secret"
       hostname                 = "localhost"
       ingress_enabled          = false
     },
@@ -43,14 +43,14 @@ resource "kubectl_manifest" "keycloak_deployment" {
         name: keycloak-db-secret-1
         key: password
     http:
-      tlsSecret: ${tls_secret}
+      tlsSecret: ${local.keycloak.tls_secret}
       httpEnabled: true
       httpPort: 8180
       httpsPort: 8543
     hostname:
-      hostname: ${hostname}
+      hostname: ${local.keycloak.hostname}
     ingress:
-      enabled: ${ingress_enabled}
+      enabled: ${local.keycloak.ingress_enabled}
   YAML
 
   depends_on = [
