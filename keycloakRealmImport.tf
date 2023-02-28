@@ -3,7 +3,7 @@ locals {
   keycloakRealmImport = merge(
     {
       enabled                  = false
-      version                  = "v20.0.5"
+      version                  = "20.0.5"
     },
     var.keycloakRealmImport
   )

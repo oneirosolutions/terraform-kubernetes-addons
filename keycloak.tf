@@ -3,7 +3,7 @@ locals {
   keycloak = merge(
     {
       enabled                  = false
-      version                  = "v20.0.5"
+      version                  = "20.0.5"
       tls_secret               = "example-tls-secret"
       hostname                 = "localhost"
       ingress_enabled          = false
