@@ -49,8 +49,9 @@ resource "kubectl_manifest" "keycloak_deployment" {
       httpsPort: 8543
     hostname:
       hostname: ${local.keycloak.hostname}
+      admin: admin.keycloak.oneirosolutions.com
     ingress:
-      enabled: ${local.keycloak.ingress_enabled}
+      enabled: true
   YAML
 
   depends_on = [
