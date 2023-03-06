@@ -4,9 +4,9 @@ locals {
     {
       enabled                  = false
       version                  = "20.0.5"
-      tls_secret               = "example-tls-secret"
-      hostname                 = "localhost"
-      ingress_enabled          = false
+      hostname                 = ""
+      admin_hostname           = ""      
+      tls_secret               = ""
     },
     var.keycloak
   )
@@ -25,12 +25,8 @@ resource "kubectl_manifest" "keycloak_deployment" {
     additionalOptions:
       - name: storage
         value: jpa
-      - name: hostname-strict-https
-        value: "false"
       - name: proxy
         value: none
-      - name: hostname-port
-        value: "8543"
     db:
       vendor: postgres
       host: cockroachdb
@@ -44,12 +40,8 @@ resource "kubectl_manifest" "keycloak_deployment" {
         key: password
     http:
       tlsSecret: ${local.keycloak.tls_secret}
-      httpEnabled: true
-      httpPort: 8180
-      httpsPort: 8543
     hostname:
       hostname: ${local.keycloak.hostname}
-      admin: admin.keycloak.oneirosolutions.com
     ingress:
       enabled: true
   YAML
