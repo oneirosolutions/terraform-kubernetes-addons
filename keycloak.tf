@@ -23,10 +23,6 @@ resource "kubectl_manifest" "keycloak_deployment" {
         value: jpa
       - name: proxy
         value: none
-      - name: hostname-strict-https
-        value: "true"
-      - name: hostname-port
-        value: "8443"
     db:
       vendor: postgres
       host: cockroachdb
@@ -39,11 +35,9 @@ resource "kubectl_manifest" "keycloak_deployment" {
         name: keycloak-db-secret-1
         key: password
     http:
-      tlsSecret: stage.ireland.dlx.digital-tls
-      httpPort: 8080
-      httpsPort: 8443
+      tlsSecret: "stage.ireland.dlx.digital-tls"
     hostname:
-      hostname: stage.ireland.dlx.digital
+      hostname: "stage.ireland.dlx.digital"
     ingress:
       enabled: true
   YAML
