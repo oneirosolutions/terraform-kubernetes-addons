@@ -3,10 +3,6 @@ locals {
   keycloak = merge(
     {
       enabled                  = false
-      version                  = "20.0.5"
-      hostname                 = ""
-      admin_hostname           = ""      
-      tls_secret               = ""
     },
     var.keycloak
   )
@@ -43,11 +39,11 @@ resource "kubectl_manifest" "keycloak_deployment" {
         name: keycloak-db-secret-1
         key: password
     http:
-      tlsSecret: ${local.keycloak.tls_secret}
+      tlsSecret: stage.ireland.dlx.digital-tls
       httpPort: 8080
       httpsPort: 8443
     hostname:
-      hostname: ${local.keycloak.hostname}
+      hostname: stage.ireland.dlx.digital
     ingress:
       enabled: true
   YAML
