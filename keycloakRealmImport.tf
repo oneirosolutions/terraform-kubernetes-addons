@@ -5,7 +5,7 @@ locals {
       enabled                  = false
       version                  = "20.0.5"
       realm_name               = "dev"
-      roles                    = 
+      roles                    = ""
     },
     var.keycloakRealmImport
   )
