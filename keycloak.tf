@@ -10,7 +10,7 @@ locals {
 }
 
 resource "kubectl_manifest" "keycloak_deployment" {
-  for_each  = local.keycloak.enabled ? 1 : 0
+  count  = local.keycloak.enabled ? 1 : 0
   yaml_body = local.keycloak.extra_values
 
   depends_on = [
