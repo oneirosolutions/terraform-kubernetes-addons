@@ -22,6 +22,12 @@ variable "aws-acm-extended" {
   default     = {}
 }
 
+variable "aws-api-gw" {
+  description = "AWS API Gateway"
+  type        = any
+  default     = {}
+}
+
 variable "aws-ebs-csi-driver" {
   description = "Customize aws-ebs-csi-driver helm chart, see `aws-ebs-csi-driver.tf`"
   type        = any

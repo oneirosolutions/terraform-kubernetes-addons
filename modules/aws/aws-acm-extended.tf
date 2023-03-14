@@ -20,12 +20,12 @@ locals {
       ingress_label_fe_app       = ""
       ingress_label_fe_pod_name  = ""
       namespace                  = [""]
-      
+     
     },
     var.aws-acm-extended
   )
 #    lb_name               = split("-", split(".", kubernetes_ingress_v1.backend_ingress_extended[count.index].status.0.load_balancer.0.ingress.0.hostname).0).0
-
+ dvos = local.aws-acm-extended["enabled"] ?  aws_acm_certificate.dlx_extended[0].domain_validation_options :[]
 }
 
 //  count = length(flatten(local.aws-acm-extended.*.namespace))
@@ -248,14 +248,34 @@ data "aws_route53_zone" "dlx_digital_extended" {
   private_zone = false
 }
 
+# resource "aws_route53_record" "dlx_extended" {
+#   count = local.aws-acm-extended["enabled"] ? 1 : 0
+#   allow_overwrite = true
+#   name =  tolist(aws_acm_certificate.dlx_extended[0].domain_validation_options)[count.index].resource_record_name
+#   records = [tolist(aws_acm_certificate.dlx_extended[0].domain_validation_options)[count.index1].resource_record_value]
+#   type = tolist(aws_acm_certificate.dlx_extended[0].domain_validation_options)[count.index].resource_record_type
+#   zone_id = data.aws_route53_zone.dlx_digital_extended[0].zone_id
+#   ttl = 60
+# }
+
+# for dvo in aws_acm_certificate.dlx_extended[0].domain_validation_options : dvo.domain_name => {
+
 resource "aws_route53_record" "dlx_extended" {
-  count = local.aws-acm-extended["enabled"] ? 1 : 0
+  for_each = {
+    for dvo in local.dvos : dvo.domain_name => {
+      name    = dvo.resource_record_name
+      record  = dvo.resource_record_value
+      type    = dvo.resource_record_type
+      zone_id = data.aws_route53_zone.dlx_digital_extended[0].zone_id
+    }
+  }
+
   allow_overwrite = true
-  name =  tolist(aws_acm_certificate.dlx_extended[count.index].domain_validation_options)[0].resource_record_name
-  records = [tolist(aws_acm_certificate.dlx_extended[count.index].domain_validation_options)[0].resource_record_value]
-  type = tolist(aws_acm_certificate.dlx_extended[count.index].domain_validation_options)[0].resource_record_type
-  zone_id = data.aws_route53_zone.dlx_digital_extended[0].zone_id
-  ttl = 60
+  name            = each.value.name
+  records         = [each.value.record]
+  ttl             = 60
+  type            = each.value.type
+  zone_id         = each.value.zone_id
 }
 
 resource "aws_acm_certificate_validation" "dlx_extended" {
