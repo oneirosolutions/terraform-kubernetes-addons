@@ -14,6 +14,7 @@ resource "kubectl_manifest" "keycloakRealmImport_deployment" {
   yaml_body = local.keycloakRealmImport.extra_values
 
   depends_on = [
-    kubectl_manifest.keycloak-operator
+    kubectl_manifest.keycloak-operator,
+    kubectl_manifest.keycloak_deployment
   ]
 }
