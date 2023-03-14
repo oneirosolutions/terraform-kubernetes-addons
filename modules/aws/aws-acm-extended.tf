@@ -97,9 +97,9 @@ JSON
     }
   }
 }
-/*
+
 resource "kubernetes_service" "backend-extended" {
-  count = length(flatten(local.aws-acm-extended.*.namespace))
+  count = local.aws-acm-extended["enabled"] ? length(flatten(local.aws-acm-extended.*.namespace)) : 0
   metadata {
     name = local.aws-acm-extended.backend_service_name
     namespace = flatten(local.aws-acm-extended.*.namespace)[count.index]
@@ -123,7 +123,7 @@ resource "kubernetes_service" "backend-extended" {
 }
 
 resource "kubernetes_ingress_v1" "frontend_ingress_extended" {
-  count = length(flatten(local.aws-acm-extended.*.namespace))
+  count = local.aws-acm-extended["enabled"] ? length(flatten(local.aws-acm-extended.*.namespace)) : 0
   wait_for_load_balancer = true
   metadata {
     name = "frontend-ingress"
@@ -192,7 +192,7 @@ JSON
 }
 
 resource "kubernetes_service" "frontend_extended" {
-  count = length(flatten(local.aws-acm-extended.*.namespace))
+  count = local.aws-acm-extended["enabled"] ? length(flatten(local.aws-acm-extended.*.namespace)) : 0
   metadata {
     name = local.aws-acm-extended.frontend_service_name
     namespace = flatten(local.aws-acm-extended.*.namespace)[count.index]
@@ -215,13 +215,32 @@ resource "kubernetes_service" "frontend_extended" {
   }
 }
 
+output "domain_e_d" {
+ //value =  flatten(local.aws-acm-extended.*.domain_name)[0]
+  value = tolist(["api2.${flatten(local.aws-acm-extended.*.domain_name)[0]}"])
+}
+
+output "ns_count_2" {
+ //value =  flatten(local.aws-acm-extended.*.domain_name)[0]
+  value = length(flatten(local.aws-acm-extended.*.namespace))
+}
+
+output "domain_e_f" {
+ //value =  flatten(local.aws-acm-extended.*.domain_name)[0]
+  value = distinct(concat(local.aws-acm-extended["domain_name"], local.aws-acm-extended["namespace"]))
+}
+
+
+
 #count = can(local.aws-acm-extended["enabled"] ? 1 : 0)?  length(local.aws-acm-extended.domain_name):0
 resource "aws_acm_certificate" "dlx_extended" {
-  count = length(flatten(local.aws-acm-extended.*.domain_name))
+  count = local.aws-acm-extended["enabled"] ? length(flatten(local.aws-acm-extended.*.namespace)) : 0
   domain_name               = flatten(local.aws-acm-extended.*.domain_name)[count.index]
-  subject_alternative_names = ["*.${flatten(local.aws-acm-extended.*.domain_name)[count.index]}"]
+  subject_alternative_names = ["${local.aws-acm-extended.backend_host_prefix}.${flatten(local.aws-acm-extended.*.domain_name)[count.index]}"]
   validation_method         = "DNS"
 }
+
+
 
 data "aws_route53_zone" "dlx_digital_extended" {
   count =  local.aws-acm-extended["enabled"] ? 1 : 0
@@ -244,4 +263,3 @@ resource "aws_acm_certificate_validation" "dlx_extended" {
   certificate_arn         = aws_acm_certificate.dlx_extended[count.index].arn
   validation_record_fqdns = [for record in aws_route53_record.dlx_extended : record.fqdn]
 }
-*/

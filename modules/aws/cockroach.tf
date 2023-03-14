@@ -3,9 +3,11 @@ locals {
   cockroachdb = merge(
     {
       enabled                  = false
-      version                  = "v22.1.2"
+      version                  = "v22.2.0"
       resource_request_memory  = "2Gi"
       resource_limit_memory    = "4Gi"
+      resource_request_cpu     = "500m"
+      resource_limit_cpu       = "2"      
       node_size                = "3"
     },
     var.cockroachdb
@@ -37,10 +39,10 @@ resource "kubectl_manifest" "cockroachdb_deployment" {
     resources:
       requests:
         # This is intentionally low to make it work on local k3d clusters.
-        cpu: 500m
-        memory: 2Gi
+        cpu: ${local.cockroachdb.resource_request_cpu}
+        memory: ${local.cockroachdb.resource_request_memory}
       limits:
-        cpu: 2
+        cpu: ${local.cockroachdb.resource_limit_cpu}
         memory: ${local.cockroachdb.resource_limit_memory}
     tlsEnabled: true
   # You can set either a version of the db or a specific image name
