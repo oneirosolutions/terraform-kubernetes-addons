@@ -22,6 +22,7 @@ resource "null_resource" "wait_for_pod" {
 
 resource "kubectl_manifest" "keycloakRealmImport_deployment" {
   count   = local.keycloakRealmImport.enabled ? 1 : 0
+  force_new = true
   yaml_body = local.keycloakRealmImport.extra_values
 
   depends_on = [
