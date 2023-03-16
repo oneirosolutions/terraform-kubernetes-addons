@@ -21,7 +21,7 @@ resource "null_resource" "wait_for_pod" {
   ]
 }
 data "template_file" "keycloakRealmImport_yaml" {
-  template = "${file(local.file_path)}"
+  template = "${file(local.keycloakRealmImport.file_path)}"
   vars = {
     keycloak_client_secret = local.keycloakRealmImport.keycloak_client_secret
   }
