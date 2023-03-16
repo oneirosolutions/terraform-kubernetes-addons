@@ -3,7 +3,6 @@ locals {
   keycloakRealmImport = merge(
     {
       enabled                  = false
-      file_path                = "../../../../../../provider-config/eks-addons/keycloak/keycloakRealmImport.yaml"
       keycloak_client_secret   = ""
     },
     var.keycloakRealmImport
@@ -21,7 +20,7 @@ resource "null_resource" "wait_for_pod" {
   ]
 }
 data "template_file" "keycloakRealmImport_yaml" {
-  template = "${file(local.keycloakRealmImport.file_path)}"
+  template = local.keycloakRealmImport.extra_values
   vars = {
     keycloak_client_secret = local.keycloakRealmImport.keycloak_client_secret
   }
