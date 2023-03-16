@@ -3,8 +3,8 @@ locals {
   keycloakRealmImport = merge(
     {
       enabled                  = false
-#      keycloak_client_secret   = ""
-#      file_path                = "../../../../../../provider-config/eks-addons/keycloak/keycloakRealmImport.yaml"
+//      keycloak_client_secret   = ""
+//      file_path                = "../../../../../../provider-config/eks-addons/keycloak/keycloakRealmImport.yaml"
     },
     var.keycloakRealmImport
   )
@@ -20,20 +20,20 @@ resource "null_resource" "wait_for_pod" {
     kubectl_manifest.keycloak_deployment
   ]
 }
-#data "local_file" "keycloakRealmImport_yaml" {
-#  filename = local.keycloakRealmImport.file_path
-#}
-#data "template_file" "keycloakRealmImport_yaml" {
-#  template = data.local_file.keycloakRealmImport_yaml.content
-#  vars = {
-#    keycloak_client_secret = local.keycloakRealmImport.keycloak_client_secret
-#  }
-#}
+//data "local_file" "keycloakRealmImport_yaml" {
+//  filename = local.keycloakRealmImport.file_path
+//}
+//data "template_file" "keycloakRealmImport_yaml" {
+//  template = data.local_file.keycloakRealmImport_yaml.content
+//  vars = {
+//    keycloak_client_secret = local.keycloakRealmImport.keycloak_client_secret
+//  }
+//}
 resource "kubectl_manifest" "keycloakRealmImport_deployment" {
   count   = local.keycloakRealmImport.enabled ? 1 : 0
   force_new = true
-#  yaml_body = data.template_file.keycloakRealmImport_yaml.rendered
-#  yaml_body = data.local_file.keycloakRealmImport_yaml.content
+//  yaml_body = data.template_file.keycloakRealmImport_yaml.rendered
+//  yaml_body = data.local_file.keycloakRealmImport_yaml.content
   yaml_body = local.keycloakRealmImport.extra_values
 
   depends_on = [
