@@ -29,7 +29,7 @@ data "template_file" "keycloakRealmImport_yaml" {
 resource "kubectl_manifest" "keycloakRealmImport_deployment" {
   count   = local.keycloakRealmImport.enabled ? 1 : 0
   force_new = true
-  yaml_body = "${data.template_file.keycloakRealmImport_yaml.rendered}"
+  yaml_body = data.template_file.keycloakRealmImport_yaml.rendered
 
   depends_on = [
     kubectl_manifest.keycloak-operator,
