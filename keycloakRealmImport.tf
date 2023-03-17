@@ -5,6 +5,7 @@ locals {
       enabled                  = false
 //      keycloak_client_secret   = ""
       file_path                = "../../../../../../provider-config/eks-addons/keycloak/keycloakRealmImport.yaml"
+      keycloak_client_secret   = ""
     },
     var.keycloakRealmImport
   )
@@ -33,8 +34,9 @@ resource "kubectl_manifest" "keycloakRealmImport_deployment" {
   count   = local.keycloakRealmImport.enabled ? 1 : 0
   force_new = true
 //  yaml_body = data.template_file.keycloakRealmImport_yaml.rendered
-  yaml_body = data.local_file.keycloakRealmImport_yaml
+//  yaml_body = data.local_file.keycloakRealmImport_yaml.content
 //  yaml_body = local.keycloakRealmImport.extra_values
+  yaml_body = templatefile(local.keycloakRealmImport.file_path,{ keycloak_client_secret = local.keycloakRealmImport.keycloak_client_secret })
 
   depends_on = [
     kubectl_manifest.keycloak-operator,
