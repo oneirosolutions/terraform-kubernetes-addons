@@ -4,7 +4,7 @@ locals {
     {
       enabled                  = false
 //      file_path                = "../../../../../../provider-config/eks-addons/keycloak/keycloakRealmImport.yaml"
-      keycloak_client_secret   = ""
+//      keycloak_client_secret   = ""
     },
     var.keycloakRealmImport
   )
