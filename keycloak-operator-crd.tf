@@ -3,8 +3,8 @@ locals {
   keycloak-operator = merge(
     {
       enabled = false
-      version = "20.0.5"
-      crd_version = "20.0.5"
+      version = "21.0.1"
+      crd_version = "21.0.1"
     },
     var.keycloak-operator
   )
