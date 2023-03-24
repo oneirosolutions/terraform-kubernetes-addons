@@ -9,6 +9,7 @@ locals {
 
 }
 resource "null_resource" "wait_for_pod" {
+  count   = local.keycloakRealmImport.enabled ? 1 : 0
   provisioner "local-exec" {
     command = "kubectl wait pod/keycloak-0 --for=condition=Ready"
   }
