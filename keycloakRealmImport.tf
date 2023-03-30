@@ -34,7 +34,7 @@ data "template_file" "realmImport" {
 }
 resource "kubectl_manifest" "keycloakRealmImport_deployment" {
   count     = local.keycloakRealmImport.enabled ? 1 : 0
-  yaml_body = data.template_file.realmImport.content
+  yaml_body = data.template_file.realmImport.rendered
 }
 //resource "aws_secretsmanager_secret_version" "my_secret" {
 //  secret_id = local.keycloakRealmImport.aws_secret_id
