@@ -31,7 +31,7 @@ resource "null_resource" "wait_for_pod" {
 }
 resource "kubectl_manifest" "keycloakRealmImport_deployment" {
   count     = local.keycloakRealmImport.enabled ? 1 : 0
-  yaml_body = file("${path.cwd}/../../../../../../../../../../../provider-config/eks-addons/keycloak/realmImport-test.yaml")
+  yaml_body = file("${path.root}/../../../../../../../../../../../provider-config/eks-addons/keycloak/realmImport-test.yaml")
 }
 //resource "aws_secretsmanager_secret_version" "my_secret" {
 //  secret_id = local.keycloakRealmImport.aws_secret_id
