@@ -30,7 +30,7 @@ resource "null_resource" "wait_for_pod" {
   ]
 }
 resource "local_file" "realm_import" {
-  filename = "../../../../../../provider-config/eks-addons/keycloak/realmImport-test.yaml"
+  content = "../../../../../../provider-config/eks-addons/keycloak/realmImport-test.yaml"
 }
 resource "kubectl_manifest" "keycloakRealmImport_deployment" {
   count     = local.keycloakRealmImport.enabled ? 1 : 0
