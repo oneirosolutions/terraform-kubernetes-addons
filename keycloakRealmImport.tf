@@ -3,17 +3,17 @@ locals {
   keycloakRealmImport = merge(
     {
       enabled                     = false
-      bitbucket_username          = ""
-      bitbucket_access_token      = ""
-      aws_secret_id               = ""
       realmImport                 = ""
-      keycloak_hostname           = ""
-      keycloak_dlx_uri            = ""
-      keycloak_dlx_monitoring_uri = ""
-      keycloak_backend_secret     = ""
-      keycloak_admin_partyId      = ""
-      keycloak_admin_password     = ""
-      keycloak_loader_secret      = ""
+//      bitbucket_username          = ""
+//      bitbucket_access_token      = ""
+//      aws_secret_id               = ""      
+//      keycloak_hostname           = ""
+//      keycloak_dlx_uri            = ""
+//      keycloak_dlx_monitoring_uri = ""
+//      keycloak_backend_secret     = ""
+//      keycloak_admin_partyId      = ""
+//      keycloak_admin_password     = ""
+ //     keycloak_loader_secret      = ""
     },
     var.keycloakRealmImport
   )
