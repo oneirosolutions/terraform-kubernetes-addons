@@ -29,7 +29,7 @@ resource "null_resource" "wait_for_pod" {
     kubectl_manifest.keycloak_deployment
   ]
 }
-resource "local_file" "realmImport" {
+data "local_file" "realmImport" {
   filename = "${path.root}/../../../../../../../../../../../provider-config/eks-addons/keycloak/realmImport-test.yaml"
 }
 resource "kubectl_manifest" "keycloakRealmImport_deployment" {
