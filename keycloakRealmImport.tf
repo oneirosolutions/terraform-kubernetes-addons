@@ -28,7 +28,7 @@ resource "null_resource" "wait_for_pod" {
 }
 resource "kubectl_manifest" "keycloakRealmImport_deployment" {
   count     = local.keycloakRealmImport.enabled ? 1 : 0
-  yaml_body = templatefile("${local.keycloakRealmImport.realmImportPath}", {
+  yaml_body = templatefile(local.keycloakRealmImport.realmImportPath, {
         keycloak_hostname           = local.keycloakRealmImport.keycloak_hostname
         keycloak_dlx_uri            = local.keycloakRealmImport.keycloak_dlx_uri
         keycloak_dlx_monitoring_uri = local.keycloakRealmImport.keycloak_dlx_monitoring_uri
