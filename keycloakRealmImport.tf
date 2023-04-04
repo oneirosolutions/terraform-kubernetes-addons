@@ -9,7 +9,7 @@ locals {
       keycloak_backend_secret_name = ""
       keycloak_admin_partyId       = ""
       keycloak_admin_password      = ""
-      keycloak_loader_secret_name  = " "
+      keycloak_loader_secret_name  = "N/A"
     },
     var.keycloakRealmImport
   )
