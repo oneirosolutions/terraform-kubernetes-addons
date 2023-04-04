@@ -46,7 +46,6 @@ resource "kubectl_manifest" "keycloakRealmImport_deployment" {
   depends_on = [
     kubectl_manifest.keycloak-operator,
     kubectl_manifest.keycloak_deployment,
-    null_resource.wait_for_pod,
-    aws_secretsmanager_secret_version.backend
+    null_resource.wait_for_pod
   ]
 }
