@@ -6,7 +6,7 @@ locals {
       keycloak_hostname            = ""
       keycloak_dlx_uri             = ""
       keycloak_dlx_monitoring_uri  = ""
-      keycloak_backend_secret_name = ""
+//      keycloak_backend_secret_name = ""
       keycloak_admin_partyId       = ""
       keycloak_admin_password      = ""
       keycloak_loader_secret_name  = ""
@@ -26,7 +26,7 @@ resource "null_resource" "wait_for_pod" {
   ]
 }
 data "aws_secretsmanager_secret_version" "backend" {
-  secret_id = local.keycloakRealmImport.keycloak_backend_secret_name
+  secret_id = "op-eks-stage-ireland-default-backend-secret"
 }
 resource "kubectl_manifest" "keycloakRealmImport_deployment" {
   count     = local.keycloakRealmImport.enabled ? 1 : 0
