@@ -36,7 +36,7 @@ resource "kubectl_manifest" "keycloakRealmImport_deployment" {
       keycloak_hostname = local.keycloakRealmImport.keycloak_hostname
       keycloak_dlx_uri = local.keycloakRealmImport.keycloak_dlx_uri
       keycloak_dlx_monitoring_uri = local.keycloakRealmImport.keycloak_dlx_monitoring_uri
-      keycloak_backend_secret = jsondecode(data.aws_secretsmanager_secret_version.backend.secret_string)["KC_USER_CLIENT_SECRET"]
+      keycloak_backend_secret = jsondecode(data.aws_secretsmanager_secret_version.backend.secret_string)[KC_USER_CLIENT_SECRET]
 //      keycloak_backend_secret = local.keycloakRealmImport.keycloak_backend_secret
       keycloak_admin_partyId = local.keycloakRealmImport.keycloak_admin_partyId
       keycloak_admin_password = local.keycloakRealmImport.keycloak_admin_password
