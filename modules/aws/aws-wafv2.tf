@@ -167,19 +167,29 @@ resource "aws_wafv2_web_acl" "custom_web_acl" {
   }
 }
 
-data "aws_lb" "backend" {
+# data "aws_lb" "backend" {
+#   count   = local.aws-wafv2["enabled"] ? 1 : 0
+#   tags = {
+#     "ingress.k8s.aws/stack" = local.aws-wafv2.association_resource_name
+#   }
+# }
+
+data "aws_api_gateway_rest_api" "backend" {
   count   = local.aws-wafv2["enabled"] ? 1 : 0
-  tags = {
-    "ingress.k8s.aws/stack" = local.aws-wafv2.association_resource_name
-  }
+  name    = local.aws-wafv2.association_resource_name
 }
 
-output "load_balancer_name" {
-  value = data.aws_lb.backend
+
+# output "load_balancer_name" {
+#   value = data.aws_lb.backend
+# }
+
+output "api_gateway_name" {
+  value = data.aws_api_gateway_rest_api.backend
 }
 
 resource "aws_wafv2_web_acl_association" "web_acl_association_lb" {
   count   = local.aws-wafv2["enabled"] ? 1 : 0
-  resource_arn = data.aws_lb.backend[0].arn
+  resource_arn = join("", [data.aws_api_gateway_rest_api.backend[0].arn , "/stages/prod"])
   web_acl_arn  = aws_wafv2_web_acl.custom_web_acl[0].arn
 }
