@@ -33,13 +33,13 @@ resource "kubectl_manifest" "keycloakRealmImport_deployment" {
   yaml_body = templatefile(
     "${path.cwd}/../../../../../../../../../../../provider-config/eks-addons/keycloak/realmImport.yaml",
     {
-      keycloak_hostname = local.keycloakRealmImport.keycloak_hostname
-      keycloak_dlx_uri = local.keycloakRealmImport.keycloak_dlx_uri
-      keycloak_dlx_monitoring_uri = local.keycloakRealmImport.keycloak_dlx_monitoring_uri
-      keycloak_backend_secret = local.keycloakRealmImport.keycloak_backend_secret
-      keycloak_admin_partyId = local.keycloakRealmImport.keycloak_admin_partyId
-      keycloak_admin_password = local.keycloakRealmImport.keycloak_admin_password
-      keycloak_loader_secret = local.keycloakRealmImport.keycloak_loader_secret
+      var.keycloak_hostname = local.keycloakRealmImport.keycloak_hostname
+      var.keycloak_dlx_uri = local.keycloakRealmImport.keycloak_dlx_uri
+      var.keycloak_dlx_monitoring_uri = local.keycloakRealmImport.keycloak_dlx_monitoring_uri
+      var.keycloak_backend_secret = local.keycloakRealmImport.keycloak_backend_secret
+      var.keycloak_admin_partyId = local.keycloakRealmImport.keycloak_admin_partyId
+      var.keycloak_admin_password = local.keycloakRealmImport.keycloak_admin_password
+      var.keycloak_loader_secret = local.keycloakRealmImport.keycloak_loader_secret
     }
   )
 }
