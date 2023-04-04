@@ -6,10 +6,10 @@ locals {
       keycloak_hostname            = ""
       keycloak_dlx_uri             = ""
       keycloak_dlx_monitoring_uri  = ""
-      keycloak_backend_secret_name = ""
+      keycloak_backend_secret_name = "op-eks-stage-ireland-default-backend-secret"
       keycloak_admin_partyId       = ""
       keycloak_admin_password      = ""
-      keycloak_loader_secret_name  = "N/A"
+      keycloak_loader_secret_name  = "op-eks-stage-ireland-default-loader-secret"
     },
     var.keycloakRealmImport
   )
@@ -28,6 +28,9 @@ resource "null_resource" "wait_for_pod" {
 data "aws_secretsmanager_secret_version" "backend" {
   secret_id = local.keycloakRealmImport.keycloak_backend_secret_name
 }
+data "aws_secretsmanager_secret_version" "loader" {
+  secret_id = local.keycloakRealmImport.keycloak_loader_secret_name
+}
 resource "kubectl_manifest" "keycloakRealmImport_deployment" {
   count     = local.keycloakRealmImport.enabled ? 1 : 0
   yaml_body = templatefile(
@@ -39,7 +42,7 @@ resource "kubectl_manifest" "keycloakRealmImport_deployment" {
       keycloak_backend_secret = jsondecode(data.aws_secretsmanager_secret_version.backend.secret_string)["KC_USER_CLIENTSECRET"]
       keycloak_admin_partyId = local.keycloakRealmImport.keycloak_admin_partyId
       keycloak_admin_password = local.keycloakRealmImport.keycloak_admin_password
-      keycloak_loader_secret = local.keycloakRealmImport.keycloak_loader_secret
+      keycloak_loader_secret = jsondecode(data.aws_secretsmanager_secret_version.loader.secret_string)["KC_CLIENTSECRET"]
     }
   )
   depends_on = [
