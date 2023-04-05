@@ -3,13 +3,14 @@ locals {
   keycloakRealmImport = merge(
     {
       enabled                      = false
-      keycloak_hostname            = ""
-      keycloak_dlx_uri             = ""
-      keycloak_dlx_monitoring_uri  = ""
-      keycloak_backend_secret_name = "op-eks-stage-ireland-default-backend-secret"
-      keycloak_admin_partyId       = ""
-      keycloak_admin_password      = ""
-      keycloak_loader_secret_name  = "op-eks-stage-ireland-default-loader-secret"
+      keycloak_realm_name          = " "
+      keycloak_hostname            = " "
+      keycloak_dlx_uri             = " "
+      keycloak_dlx_monitoring_uri  = " "
+      keycloak_backend_secret_name = " "
+      keycloak_admin_partyId       = " "
+      keycloak_admin_password      = " "
+      keycloak_loader_secret_name  = " "
     },
     var.keycloakRealmImport
   )
@@ -37,6 +38,7 @@ resource "kubectl_manifest" "keycloakRealmImport_deployment" {
     "${path.cwd}/../../../../../../../../../../../provider-config/eks-addons/keycloak/realmImport.yaml",
     {
       keycloak_hostname = local.keycloakRealmImport.keycloak_hostname
+      keycloak_realm_name = local.keycloakRealmImport.keycloak_realm_name
       keycloak_dlx_uri = local.keycloakRealmImport.keycloak_dlx_uri
       keycloak_dlx_monitoring_uri = local.keycloakRealmImport.keycloak_dlx_monitoring_uri
       keycloak_backend_secret = jsondecode(data.aws_secretsmanager_secret_version.backend.secret_string)["KC_USER_CLIENTSECRET"]
