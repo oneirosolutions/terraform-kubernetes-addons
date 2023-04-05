@@ -3,14 +3,14 @@ locals {
   keycloakRealmImport = merge(
     {
       enabled                      = false
-      keycloak_realm_name          = " "
-      keycloak_hostname            = " "
-      keycloak_dlx_uri             = " "
-      keycloak_dlx_monitoring_uri  = " "
-      keycloak_backend_secret_name = " "
-      keycloak_admin_partyId       = " "
-      keycloak_admin_password      = " "
-      keycloak_loader_secret_name  = " "
+      keycloak_realm_name          = ""
+      keycloak_hostname            = ""
+      keycloak_dlx_uri             = ""
+      keycloak_dlx_monitoring_uri  = ""
+      keycloak_admin_partyId       = ""
+      keycloak_admin_password      = ""
+      keycloak_backend_secret_name = "default"
+      keycloak_loader_secret_name  = "default"
     },
     var.keycloakRealmImport
   )
@@ -37,14 +37,14 @@ resource "kubectl_manifest" "keycloakRealmImport_deployment" {
   yaml_body = templatefile(
     "${path.cwd}/../../../../../../../../../../../provider-config/eks-addons/keycloak/realmImport.yaml",
     {
-      keycloak_hostname = local.keycloakRealmImport.keycloak_hostname
-      keycloak_realm_name = local.keycloakRealmImport.keycloak_realm_name
-      keycloak_dlx_uri = local.keycloakRealmImport.keycloak_dlx_uri
+      keycloak_hostname           = local.keycloakRealmImport.keycloak_hostname
+      keycloak_realm_name         = local.keycloakRealmImport.keycloak_realm_name
+      keycloak_dlx_uri            = local.keycloakRealmImport.keycloak_dlx_uri
       keycloak_dlx_monitoring_uri = local.keycloakRealmImport.keycloak_dlx_monitoring_uri
-      keycloak_backend_secret = jsondecode(data.aws_secretsmanager_secret_version.backend.secret_string)["KC_USER_CLIENTSECRET"]
-      keycloak_admin_partyId = local.keycloakRealmImport.keycloak_admin_partyId
-      keycloak_admin_password = local.keycloakRealmImport.keycloak_admin_password
-      keycloak_loader_secret = jsondecode(data.aws_secretsmanager_secret_version.loader.secret_string)["KC_CLIENTSECRET"]
+      keycloak_backend_secret     = jsondecode(data.aws_secretsmanager_secret_version.backend.secret_string)["KC_USER_CLIENTSECRET"]
+      keycloak_admin_partyId      = local.keycloakRealmImport.keycloak_admin_partyId
+      keycloak_admin_password     = local.keycloakRealmImport.keycloak_admin_password
+      keycloak_loader_secret      = jsondecode(data.aws_secretsmanager_secret_version.loader.secret_string)["KC_CLIENTSECRET"]
     }
   )
   depends_on = [
