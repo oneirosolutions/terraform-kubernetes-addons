@@ -9,8 +9,8 @@ locals {
       keycloak_dlx_monitoring_uri  = ""
       keycloak_admin_partyId       = ""
       keycloak_admin_password      = ""
-      keycloak_backend_secret_name = "default"
-      keycloak_loader_secret_name  = "default"
+      keycloak_backend_secret_name = ""
+      keycloak_loader_secret_name  = ""
     },
     var.keycloakRealmImport
   )
@@ -27,9 +27,11 @@ resource "null_resource" "wait_for_pod" {
   ]
 }
 data "aws_secretsmanager_secret_version" "backend" {
+  count     = local.keycloakRealmImport.enabled ? 1 : 0
   secret_id = local.keycloakRealmImport.keycloak_backend_secret_name
 }
 data "aws_secretsmanager_secret_version" "loader" {
+  count     = local.keycloakRealmImport.enabled ? 1 : 0
   secret_id = local.keycloakRealmImport.keycloak_loader_secret_name
 }
 resource "kubectl_manifest" "keycloakRealmImport_deployment" {
