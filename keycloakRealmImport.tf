@@ -16,17 +16,16 @@ locals {
   )
 
 }
-resource "null_resource" "wait_for_pod" {
-  count   = local.keycloakRealmImport.enabled ? 1 : 0
-  provisioner "local-exec" {
-    command = "kubectl wait pod/keycloak-0 --for=condition=Ready"
-  }
-
-  depends_on = [
-    kubectl_manifest.keycloak-operator,
-    kubectl_manifest.keycloak_deployment
-  ]
-}
+#resource "null_resource" "wait_for_pod" {
+#  count   = local.keycloakRealmImport.enabled ? 1 : 0
+#  provisioner "local-exec" {
+#    command = "kubectl wait pod/keycloak-0 --for=condition=Ready"
+#  }
+#  depends_on = [
+#    kubectl_manifest.keycloak-operator,
+#    kubectl_manifest.keycloak_deployment
+#  ]
+#}
 data "aws_secretsmanager_secret_version" "backend" {
   count     = local.keycloakRealmImport.enabled ? 1 : 0
   secret_id = local.keycloakRealmImport.keycloak_backend_secret_name
