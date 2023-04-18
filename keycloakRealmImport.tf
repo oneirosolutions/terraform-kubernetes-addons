@@ -42,8 +42,8 @@ resource "kubectl_manifest" "keycloakRealmImport_deployment" {
       keycloak_smtp_password      = local.keycloakRealmImport.keycloak_smtp_password
       keycloak_smtp_email_address = local.keycloakRealmImport.keycloak_smtp_email_address
       keycloak_smtp_host          = local.keycloakRealmImport.keycloak_smtp_host
-      keycloak_backend_secret     = jsondecode(data.aws_secretsmanager_secret_version.backend[count.index].secret_string)["KC_USER_CLIENTSECRET"]
-      keycloak_loader_secret      = jsondecode(data.aws_secretsmanager_secret_version.loader[count.index].secret_string)["KC_CLIENTSECRET"]
+      keycloak_backend_secret     = jsondecode(data.aws_secretsmanager_secret_version.backend.secret_string)["KC_USER_CLIENTSECRET"]
+      keycloak_loader_secret      = jsondecode(data.aws_secretsmanager_secret_version.loader.secret_string)["KC_CLIENTSECRET"]
       keycloak_version            = local.keycloakRealmImport.keycloak_version
     }
   )
