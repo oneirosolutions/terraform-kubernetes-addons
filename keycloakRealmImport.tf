@@ -12,8 +12,8 @@ locals {
       keycloak_smtp_password       = ""
       keycloak_smtp_email_address  = ""
       keycloak_smtp_host           = ""
-      keycloak_backend_secret_name = ""
-      keycloak_loader_secret_name  = ""
+      keycloak_backend_secret_name = [""]
+      keycloak_loader_secret_name  = [""]
       keycloak_version             = ""
     },
     var.keycloakRealmImport
@@ -21,11 +21,11 @@ locals {
 
 }
 data "aws_secretsmanager_secret_version" "backend" {
-  count     = local.keycloakRealmImport.enabled ? 1 : 0
+  count     = local.keycloakRealmImport.enabled ? length(local.keycloakRealmImport.keycloak_backend_secret_name) : 0
   secret_id = local.keycloakRealmImport.keycloak_backend_secret_name
 }
 data "aws_secretsmanager_secret_version" "loader" {
-  count     = local.keycloakRealmImport.enabled ? 1 : 0
+  count     = local.keycloakRealmImport.enabled ? length(local.keycloakRealmImport.keycloak_loader_secret_name) : 0
   secret_id = local.keycloakRealmImport.keycloak_loader_secret_name
 }
 resource "kubectl_manifest" "keycloakRealmImport_deployment" {
@@ -42,8 +42,8 @@ resource "kubectl_manifest" "keycloakRealmImport_deployment" {
       keycloak_smtp_password      = local.keycloakRealmImport.keycloak_smtp_password
       keycloak_smtp_email_address = local.keycloakRealmImport.keycloak_smtp_email_address
       keycloak_smtp_host          = local.keycloakRealmImport.keycloak_smtp_host
-      keycloak_backend_secret     = jsondecode(data.aws_secretsmanager_secret_version.backend.secret_string)["KC_USER_CLIENTSECRET"]
-      keycloak_loader_secret      = jsondecode(data.aws_secretsmanager_secret_version.loader.secret_string)["KC_CLIENTSECRET"]
+      keycloak_backend_secret     = jsondecode(data.aws_secretsmanager_secret_version.backend[count.index].secret_string)["KC_USER_CLIENTSECRET"]
+      keycloak_loader_secret      = jsondecode(data.aws_secretsmanager_secret_version.loader[count.index].secret_string)["KC_CLIENTSECRET"]
       keycloak_version            = local.keycloakRealmImport.keycloak_version
     }
   )
