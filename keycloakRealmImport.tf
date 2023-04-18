@@ -47,6 +47,7 @@ resource "kubectl_manifest" "keycloakRealmImport_deployment" {
       keycloak_version            = local.keycloakRealmImport.keycloak_version
     }
   )
+  force_new = true
   depends_on = [
     kubectl_manifest.keycloak-operator,
     kubectl_manifest.keycloak_deployment,
