@@ -22,11 +22,11 @@ locals {
 }
 data "aws_secretsmanager_secret_version" "backend" {
   count     = local.keycloakRealmImport.enabled ? length(local.keycloakRealmImport.keycloak_backend_secret_name) : 0
-  secret_id = local.keycloakRealmImport.keycloak_backend_secret_name
+  secret_id = local.keycloakRealmImport.keycloak_backend_secret_name[count.index]
 }
 data "aws_secretsmanager_secret_version" "loader" {
   count     = local.keycloakRealmImport.enabled ? length(local.keycloakRealmImport.keycloak_loader_secret_name) : 0
-  secret_id = local.keycloakRealmImport.keycloak_loader_secret_name
+  secret_id = local.keycloakRealmImport.keycloak_loader_secret_name[count.index]
 }
 resource "kubectl_manifest" "keycloakRealmImport_deployment" {
   count     = local.keycloakRealmImport.enabled ? length(local.keycloakRealmImport.keycloak_realm_name) : 0
