@@ -50,7 +50,6 @@ resource "kubectl_manifest" "keycloakRealmImport_deployment" {
   force_new = true
   depends_on = [
     kubectl_manifest.keycloak-operator,
-    kubectl_manifest.keycloak_deployment,
-    kubectl_manifest.keycloakRealmImport_deployment
+    kubectl_manifest.keycloak_deployment
   ]
 }
