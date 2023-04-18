@@ -15,7 +15,6 @@ locals {
       keycloak_backend_secret_name = [""]
       keycloak_loader_secret_name  = [""]
       keycloak_version             = ""
-      keycloak_job_name            = "keycloak-realm-1"
     },
     var.keycloakRealmImport
   )
@@ -34,7 +33,6 @@ resource "kubectl_manifest" "keycloakRealmImport_deployment" {
   yaml_body = templatefile(
     "${path.cwd}/../../../../../../../../../../../provider-config/eks-addons/keycloak/realmImport.yaml",
     {
-      keycloak_job_name           = local.keycloakRealmImport.keycloak_job_name
       keycloak_realm_name         = local.keycloakRealmImport.keycloak_realm_name[count.index]
       keycloak_dlx_uri            = local.keycloakRealmImport.keycloak_dlx_uri[count.index]
       keycloak_dlx_backend_uri    = local.keycloakRealmImport.keycloak_dlx_backend_uri[count.index]
