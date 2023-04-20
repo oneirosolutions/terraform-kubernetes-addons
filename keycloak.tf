@@ -29,6 +29,7 @@ resource "kubectl_manifest" "keycloak_ingress" {
       keycloak_hostname = local.keycloak.keycloak_hostname
     }
   )
+  force_new = true
   depends_on = [
     kubectl_manifest.keycloak-operator,
     kubectl_manifest.keycloak_deployment
