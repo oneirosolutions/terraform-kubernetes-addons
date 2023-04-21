@@ -4,6 +4,7 @@ locals {
     {
       enabled                  = false
       keycloak_hostname        = ""
+      eks_cluster_name         = ""
     },
     var.keycloak
   )
@@ -35,6 +36,9 @@ resource "kubectl_manifest" "keycloak_ingress" {
   ]
 }
 data "aws_lb" "cluster_elb" {
+  tags = {
+    elbv2.k8s.aws/cluster = local.keycloak.eks_cluster_name
+  }
 }
 resource "aws_route53_record" "keycloak_dns" {
   zone_id = aws_route53_record.primary.zone_id
