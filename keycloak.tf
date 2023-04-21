@@ -37,7 +37,7 @@ resource "kubectl_manifest" "keycloak_ingress" {
 }
 data "aws_lb" "cluster_elb" {
   tags = {
-    elbv2.k8s.aws/cluster = local.keycloak.eks_cluster_name
+    "elbv2.k8s.aws/cluster" = local.keycloak.eks_cluster_name
   }
 }
 resource "aws_route53_record" "keycloak_dns" {
