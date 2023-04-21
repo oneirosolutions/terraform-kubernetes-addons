@@ -31,7 +31,21 @@ resource "kubectl_manifest" "keycloak_ingress" {
   )
   force_new = true
   depends_on = [
-    kubectl_manifest.keycloak-operator,
     kubectl_manifest.keycloak_deployment
+  ]
+}
+data "aws_lb" "cluster_elb" {
+}
+resource "aws_route53_record" "keycloak_dns" {
+  zone_id = aws_route53_record.primary.zone_id
+  name    = local.keycloak.keycloak_hostname
+  type    = "A"
+  alias {
+    name                   = data.aws_lb.cluster_elb.dns_name
+    zone_id                = data.aws_lb.cluster_elb.zone_id
+    evaluate_target_health = true
+  }
+  depends_on = [
+    kubectl_manifest.keycloak_ingress
   ]
 }
