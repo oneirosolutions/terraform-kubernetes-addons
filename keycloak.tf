@@ -4,6 +4,7 @@ locals {
     {
       enabled                  = false
       keycloak_hostname        = ""
+      eks_cluster_name         = ""
     },
     var.keycloak
   )
@@ -18,7 +19,8 @@ resource "kubectl_manifest" "keycloak_deployment" {
     }
   )
   depends_on = [
-    kubectl_manifest.keycloak-operator
+    kubectl_manifest.keycloak-operator,
+    kubectl_manifest.keycloak_ingress
   ]
 }
 resource "kubectl_manifest" "keycloak_ingress" {
@@ -30,8 +32,23 @@ resource "kubectl_manifest" "keycloak_ingress" {
     }
   )
   force_new = true
-  depends_on = [
-    kubectl_manifest.keycloak-operator,
-    kubectl_manifest.keycloak_deployment
-  ]
+}
+data "aws_lb" "cluster_elb" {
+  count = local.keycloak.enabled ? 1 : 0
+  tags = {
+    "service.k8s.aws/resource" = "LoadBalancer"
+    "service.k8s.aws/stack" = "ingress-nginx/ingress-nginx-controller"
+    "elbv2.k8s.aws/cluster" = local.keycloak.eks_cluster_name
+  }
+}
+resource "aws_route53_record" "keycloak_dns" {
+  count   = local.keycloak.enabled ? 1 : 0
+  zone_id = "Z05857706UHYGSK0Q7ZS"
+  name    = trimsuffix(local.keycloak.keycloak_hostname,".dlx.digital")
+  type    = "A"
+  alias {
+    name                   = data.aws_lb.cluster_elb[count.index].dns_name
+    zone_id                = data.aws_lb.cluster_elb[count.index].zone_id
+    evaluate_target_health = true
+  }
 }
