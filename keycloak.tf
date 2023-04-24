@@ -3,8 +3,8 @@ locals {
   keycloak = merge(
     {
       enabled                  = false
-      keycloak_hostname        = "kc.stage.ireland.dlx.digital"
-      eks_cluster_name         = "op-eks-stage-ireland"
+      keycloak_hostname        = ""
+      eks_cluster_name         = ""
     },
     var.keycloak
   )
