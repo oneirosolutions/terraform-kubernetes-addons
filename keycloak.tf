@@ -39,6 +39,7 @@ output "cluster_name" {
   value = local.keycloak.eks_cluster_name
 }
 data "aws_lb" "cluster_elb" {
+  count   = local.keycloak.enabled ? 1 : 0
   tags = {
     "service.k8s.aws/resource" = "LoadBalancer"
     "service.k8s.aws/stack" = "ingress-nginx/ingress-nginx-controller"
