@@ -19,7 +19,8 @@ resource "kubectl_manifest" "keycloak_deployment" {
     }
   )
   depends_on = [
-    kubectl_manifest.keycloak-operator
+    kubectl_manifest.keycloak-operator,
+    kubectl_manifest.keycloak_ingress
   ]
 }
 resource "kubectl_manifest" "keycloak_ingress" {
@@ -31,9 +32,6 @@ resource "kubectl_manifest" "keycloak_ingress" {
     }
   )
   force_new = true
-  depends_on = [
-    kubectl_manifest.keycloak_deployment
-  ]
 }
 data "aws_lb" "cluster_elb" {
   count = local.keycloak.enabled ? 1 : 0
@@ -42,9 +40,6 @@ data "aws_lb" "cluster_elb" {
     "service.k8s.aws/stack" = "ingress-nginx/ingress-nginx-controller"
     "elbv2.k8s.aws/cluster" = local.keycloak.eks_cluster_name
   }
-  depends_on = [
-    kubectl_manifest.keycloak_ingress
-  ]
 }
 resource "aws_route53_record" "keycloak_dns" {
   count   = local.keycloak.enabled ? 1 : 0
@@ -56,7 +51,4 @@ resource "aws_route53_record" "keycloak_dns" {
     zone_id                = data.aws_lb.cluster_elb[count.index].zone_id
     evaluate_target_health = true
   }
-  depends_on = [
-    kubectl_manifest.keycloak_ingress
-  ]
 }
