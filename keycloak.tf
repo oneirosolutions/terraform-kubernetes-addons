@@ -35,9 +35,6 @@ resource "kubectl_manifest" "keycloak_ingress" {
     kubectl_manifest.keycloak_deployment
   ]
 }
-output "cluster_name" {
-  value = local.keycloak.eks_cluster_name
-}
 data "aws_lb" "cluster_elb" {
   count = local.keycloak.enabled ? 1 : 0
   tags = {
