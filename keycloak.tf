@@ -36,7 +36,6 @@ resource "kubectl_manifest" "keycloak_ingress" {
   ]
 }
 data "aws_lb" "cluster_elb" {
-  count = local.keycloak.enabled ? 1 : 0
   tags = {
     "service.k8s.aws/resource" = "LoadBalancer"
     "service.k8s.aws/stack" = "ingress-nginx/ingress-nginx-controller"
