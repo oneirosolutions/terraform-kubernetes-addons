@@ -39,7 +39,7 @@ output "cluster_name" {
   value = local.keycloak.eks_cluster_name
 }
 data "aws_lb" "cluster_elb" {
-  count   = local.keycloak.enabled ? 1 : 0
+  count = local.keycloak.enabled ? 1 : 0
   tags = {
     "service.k8s.aws/resource" = "LoadBalancer"
     "service.k8s.aws/stack" = "ingress-nginx/ingress-nginx-controller"
@@ -55,8 +55,8 @@ resource "aws_route53_record" "keycloak_dns" {
   name    = trimsuffix(local.keycloak.keycloak_hostname,".dlx.digital")
   type    = "A"
   alias {
-    name                   = data.aws_lb.cluster_elb.dns_name
-    zone_id                = data.aws_lb.cluster_elb.zone_id
+    name                   = data.aws_lb.cluster_elb[count.index].dns_name
+    zone_id                = data.aws_lb.cluster_elb[count.index].zone_id
     evaluate_target_health = true
   }
   depends_on = [
