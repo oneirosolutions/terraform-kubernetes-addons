@@ -41,7 +41,7 @@ data "aws_lb" "cluster_elb" {
   }
 }
 resource "aws_route53_record" "keycloak_dns" {
-  zone_id = aws_route53_zone.primary.zone_id
+  zone_id = "Z05857706UHYGSK0Q7ZS"
   name    = local.keycloak.keycloak_hostname
   type    = "A"
   alias {
