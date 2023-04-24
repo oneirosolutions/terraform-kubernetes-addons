@@ -4,7 +4,7 @@ locals {
     {
       enabled                  = false
       keycloak_hostname        = ""
-      eks_cluster_name         = ""
+      eks_cluster_name         = "op-eks-stage-london"
     },
     var.keycloak
   )
