@@ -39,7 +39,7 @@ data "aws_lb" "cluster_elb" {
   tags = {
     "service.k8s.aws/resource" = "LoadBalancer"
     "service.k8s.aws/stack" = "ingress-nginx/ingress-nginx-controller"
-    "elbv2.k8s.aws/cluster" = local.keycloak.eks_cluster_name
+  #  "elbv2.k8s.aws/cluster" = local.keycloak.eks_cluster_name
   }
 }
 resource "aws_route53_record" "keycloak_dns" {
