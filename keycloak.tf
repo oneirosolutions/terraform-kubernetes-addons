@@ -37,6 +37,8 @@ resource "kubectl_manifest" "keycloak_ingress" {
 }
 data "aws_lb" "cluster_elb" {
   tags = {
+    "service.k8s.aws/resource" = "LoadBalancer"
+    "service.k8s.aws/stack" = "ingress-nginx/ingress-nginx-controller"
     "elbv2.k8s.aws/cluster" = local.keycloak.eks_cluster_name
   }
 }
