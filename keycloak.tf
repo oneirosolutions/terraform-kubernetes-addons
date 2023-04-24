@@ -3,7 +3,7 @@ locals {
   keycloak = merge(
     {
       enabled                  = false
-      keycloak_hostname        = ""
+      keycloak_hostname        = "kc.stage.ireland.dlx.digital"
       eks_cluster_name         = "op-eks-stage-ireland"
     },
     var.keycloak
@@ -45,7 +45,7 @@ data "aws_lb" "cluster_elb" {
 resource "aws_route53_record" "keycloak_dns" {
   count   = local.keycloak.enabled ? 1 : 0
   zone_id = "Z05857706UHYGSK0Q7ZS"
-  name    = "kc.stage.ireland"
+  name    = trimsuffix(local.keycloak.keycloak_hostname,".dlx.digital")
   type    = "A"
   alias {
     name                   = data.aws_lb.cluster_elb.dns_name
