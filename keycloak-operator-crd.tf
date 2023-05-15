@@ -29,7 +29,7 @@ data "http" "keycloak-operator-crd" {
   url      = each.key
 }
 resource "kubectl_manifest" "keycloak-operator-crd" {
-  for_each  = local.keycloak-operator.enabled ? data.http.keycloak-operator-crd : []
+  for_each  = local.keycloak-operator.enabled ? data.http.keycloak-operator-crd : {}
   yaml_body = each.value
 }
 data "http" "keycloak-operator" {
