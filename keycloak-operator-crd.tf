@@ -36,13 +36,13 @@ data "http" "keycloak-operator" {
   count = local.keycloak-operator.enabled ? 1 : 0
   url   = local.keycloak-operator_yaml
 }
-data "kubectl_file_documents" "keycloak-operator" {
-  count = local.keycloak-operator.enabled ? 1 : 0
-  content = data.http.keycloak-operator[0].body
-}
+#data "kubectl_file_documents" "keycloak-operator" {
+#  count = local.keycloak-operator.enabled ? 1 : 0
+#  content = data.http.keycloak-operator[0].body
+#}
 resource "kubectl_manifest" "keycloak-operator" {
   for_each = local.keycloak-operator.enabled ? toset(local.keycloak-operator.namespace) : []
-  yaml_body = data.kubectl_file_documents.keycloak-operator[0]
+  yaml_body = data.http.keycloak-operator[0].body
   override_namespace = each.key
 }
 #data "kubectl_file_documents" "keycloak-operator" {
