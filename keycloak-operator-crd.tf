@@ -23,13 +23,13 @@ locals {
 #    }
 #  ] : null
 
-  keycloak-operator_apply = local.keycloak-operator["enabled"] ? [for each_namespace in local.keycloak-operator.namespace : [
+  keycloak-operator_apply = local.keycloak-operator["enabled"] ? flatten([for each_namespace in local.keycloak-operator.namespace : [
     for each_resource in data.kubectl_file_documents.keycloak-operator[0].documents : {
       namespace = each_namespace
       resource  = each_resource
     }
   ]
-  ] : null
+  ]) : null
 }
 data "http" "keycloak-operator-crd" {
   for_each = local.keycloak-operator.enabled ? toset(local.keycloak-operator-crd_yaml_files) : []
