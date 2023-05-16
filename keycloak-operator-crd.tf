@@ -17,12 +17,6 @@ locals {
 
   keycloak-operator_yaml = "https://raw.githubusercontent.com/keycloak/keycloak-k8s-resources/${local.keycloak-operator.version}/kubernetes/kubernetes.yml"
 
-#  keycloak-operator_apply = local.keycloak-operator["enabled"] ? [for v in data.kubectl_file_documents.keycloak-operator[0].documents : {
-#    data : yamldecode(v)
-#    content : v
-#    }
-#  ] : null
-
   keycloak-operator_apply = local.keycloak-operator["enabled"] ? flatten([for each_namespace in local.keycloak-operator.namespace : [
     for each_resource in data.kubectl_file_documents.keycloak-operator[0].documents : {
       namespace = each_namespace
@@ -56,11 +50,3 @@ resource "kubectl_manifest" "keycloak-operator" {
     kubectl_manifest.keycloak-operator-crd
   ]
 }
-#data "kubectl_file_documents" "keycloak-operator" {
-#  count   = local.keycloak-operator.enabled ? 1 : 0
-#  content = join("\n---\n", [for k, v in data.http.keycloak-operator : v.body])
-#}
-#resource "kubectl_manifest" "keycloak-operator" {
-#  for_each  = local.keycloak-operator.enabled ? { for v in local.keycloak-operator_apply : lower(join("/", compact([v.data.apiVersion, v.data.kind, lookup(v.data.metadata, "namespace", ""), v.data.metadata.name]))) => v.content } : {}
-#  yaml_body = each.value
-#}
