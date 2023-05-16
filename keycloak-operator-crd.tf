@@ -35,6 +35,9 @@ data "http" "keycloak-operator-crd" {
   for_each = local.keycloak-operator.enabled ? toset(local.keycloak-operator-crd_yaml_files) : []
   url      = each.key
 }
+output "keycloak-operator-crd" {
+  value = data.http.keycloak-operator-crd
+}
 data "kubectl_file_documents" "keycloak-operator-crd" {
   count = local.keycloak-operator.enabled ? 1 : 0
   content = data.http.keycloak-operator-crd[0].body
