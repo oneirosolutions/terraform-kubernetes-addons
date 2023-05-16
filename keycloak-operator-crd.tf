@@ -32,15 +32,15 @@ locals {
   ]) : null
 }
 data "http" "keycloak-operator-crd" {
-  for_each = local.keycloak-operator.enabled ? toset(local.keycloak-operator-crd_yaml_files) : []
-  url      = each.key
+  count = local.keycloak-operator.enabled ? length(local.keycloak-operator-crd_yaml_files) : 0
+  url   = local.keycloak-operator-crd_yaml_files[count.index]
 }
 output "keycloak-operator-crd" {
   value = data.http.keycloak-operator-crd[0].response_body
 }
 resource "kubectl_manifest" "keycloak-operator-crd" {
-  for_each  = local.keycloak-operator.enabled ? data.http.keycloak-operator-crd[each.key].response_body : {}
-  yaml_body = each.value
+  count     = local.keycloak-operator.enabled ? length(data.http.keycloak-operator-crd) : 0
+  yaml_body = data.http.keycloak-operator-crd[count.index].response_body
 }
 data "http" "keycloak-operator" {
   count = local.keycloak-operator.enabled ? 1 : 0
