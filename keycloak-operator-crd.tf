@@ -37,7 +37,7 @@ data "http" "keycloak-operator-crd" {
 }
 resource "kubectl_manifest" "keycloak-operator-crd" {
   count     = local.keycloak-operator.enabled ? length(data.http.keycloak-operator-crd) : 0
-  yaml_body = data.http.keycloak-operator-crd[count.index].request_body
+  yaml_body = data.http.keycloak-operator-crd[count.index].response_body
 }
 data "http" "keycloak-operator" {
   count = local.keycloak-operator.enabled ? 1 : 0
@@ -45,7 +45,7 @@ data "http" "keycloak-operator" {
 }
 data "kubectl_file_documents" "keycloak-operator" {
   count = local.keycloak-operator.enabled ? 1 : 0
-  content = data.http.keycloak-operator[0].request_body
+  content = data.http.keycloak-operator[0].response_body
 }
 resource "kubectl_manifest" "keycloak-operator" {
   count = local.keycloak-operator.enabled ? length(local.keycloak-operator_apply) : 0
