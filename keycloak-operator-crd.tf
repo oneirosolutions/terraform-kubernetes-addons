@@ -24,9 +24,9 @@ locals {
 #  ] : null
 
   keycloak-operator_apply = local.keycloak-operator["enabled"] ? [for each_namespace in local.keycloak-operator.namespace : [
-    for resource in data.kubectl_file_documents.keycloak-operator : {
+    for each_resource in data.kubectl_file_documents.keycloak-operator.documents : {
       namespace = each_namespace
-      resource   = resource
+      resource  = each_resource
     }
   ]
   ] : null
