@@ -32,15 +32,15 @@ resource "kubectl_manifest" "keycloak-operator-crd" {
   for_each  = local.keycloak-operator.enabled ? data.http.keycloak-operator-crd : {}
   yaml_body = yamlencode(each.value)
 }
-data "http" "keycloak-operator" {
-  count = local.keycloak-operator.enabled ? 1 : 0
-  url   = local.keycloak-operator_yaml
-}
-resource "kubectl_manifest" "keycloak-operator" {
-  count = local.keycloak-operator.enabled ? length(local.keycloak-operator.namespace) : 0
-  yaml_body = yamlencode(data.http.keycloak-operator)
-  override_namespace = local.keycloak-operator.namespace[count.index]
-}
+#data "http" "keycloak-operator" {
+#  count = local.keycloak-operator.enabled ? 1 : 0
+#  url   = local.keycloak-operator_yaml
+#}
+#resource "kubectl_manifest" "keycloak-operator" {
+#  count = local.keycloak-operator.enabled ? length(local.keycloak-operator.namespace) : 0
+#  yaml_body = yamlencode(data.http.keycloak-operator)
+#  override_namespace = local.keycloak-operator.namespace[count.index]
+#}
 #data "kubectl_file_documents" "keycloak-operator" {
 #  count   = local.keycloak-operator.enabled ? 1 : 0
 #  content = join("\n---\n", [for k, v in data.http.keycloak-operator : v.body])
