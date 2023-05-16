@@ -36,10 +36,10 @@ data "http" "keycloak-operator-crd" {
   url      = each.key
 }
 output "keycloak-operator-crd" {
-  value = data.http.keycloak-operator-crd.response_body
+  value = data.http.keycloak-operator-crd[0].response_body
 }
 resource "kubectl_manifest" "keycloak-operator-crd" {
-  for_each  = local.keycloak-operator.enabled ? data.kubectl_file_documents.keycloak-operator-crd.response_body : {}
+  for_each  = local.keycloak-operator.enabled ? data.http.kubectl_file_documents.keycloak-operator-crd.response_body : {}
   yaml_body = each.value
 }
 data "http" "keycloak-operator" {
