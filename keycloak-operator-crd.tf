@@ -35,9 +35,13 @@ data "http" "keycloak-operator-crd" {
   for_each = local.keycloak-operator.enabled ? toset(local.keycloak-operator-crd_yaml_files) : []
   url      = each.key
 }
+data "kubectl_file_documents" "keycloak-operator-crd" {
+  count = local.keycloak-operator.enabled ? 1 : 0
+  content = data.http.keycloak-operator-crd[0].body
+}
 resource "kubectl_manifest" "keycloak-operator-crd" {
-  for_each  = local.keycloak-operator.enabled ? data.http.keycloak-operator-crd : {}
-  yaml_body = yamlencode(each.value)
+  for_each  = local.keycloak-operator.enabled ? data.kubectl_file_documents.keycloak-operator-crd : {}
+  yaml_body = each.value
 }
 data "http" "keycloak-operator" {
   count = local.keycloak-operator.enabled ? 1 : 0
@@ -46,9 +50,6 @@ data "http" "keycloak-operator" {
 data "kubectl_file_documents" "keycloak-operator" {
   count = local.keycloak-operator.enabled ? 1 : 0
   content = data.http.keycloak-operator[0].body
-}
-output "keycloak-operator_apply" {
-  value = local.keycloak-operator_apply
 }
 resource "kubectl_manifest" "keycloak-operator" {
   count = local.keycloak-operator.enabled ? length(local.keycloak-operator_apply) : 0
