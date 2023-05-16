@@ -53,7 +53,7 @@ resource "kubectl_manifest" "keycloak-operator" {
   override_namespace = local.keycloak-operator_apply[count.index].namespace
 
   depends_on = [
-    kubectl_manifest.kubectl-operator-crd
+    kubectl_manifest.keycloak-operator-crd
   ]
 }
 #data "kubectl_file_documents" "keycloak-operator" {
