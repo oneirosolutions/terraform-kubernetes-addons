@@ -38,7 +38,7 @@ data "http" "keycloak-operator" {
 }
 data "kubectl_file_documents" "keycloak-operator" {
   count = local.keycloak-operator.enabled ? 1 : 0
-  content = data.http.keycloak-operator.body[0]
+  content = data.http.keycloak-operator[0].body
 }
 resource "kubectl_manifest" "keycloak-operator" {
   for_each = local.keycloak-operator.enabled ? toset(local.keycloak-operator.namespace) : []
