@@ -35,12 +35,9 @@ data "http" "keycloak-operator-crd" {
   count = local.keycloak-operator.enabled ? length(local.keycloak-operator-crd_yaml_files) : 0
   url   = local.keycloak-operator-crd_yaml_files[count.index]
 }
-output "keycloak-operator-crd" {
-  value = data.http.keycloak-operator-crd[0].response_body
-}
 resource "kubectl_manifest" "keycloak-operator-crd" {
   count     = local.keycloak-operator.enabled ? length(data.http.keycloak-operator-crd) : 0
-  yaml_body = data.http.keycloak-operator-crd[count.index].response_body
+  yaml_body = data.http.keycloak-operator-crd[count.index].request_body
 }
 data "http" "keycloak-operator" {
   count = local.keycloak-operator.enabled ? 1 : 0
