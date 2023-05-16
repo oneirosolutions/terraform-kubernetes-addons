@@ -51,6 +51,10 @@ resource "kubectl_manifest" "keycloak-operator" {
   count = local.keycloak-operator.enabled ? length(local.keycloak-operator_apply) : 0
   yaml_body = local.keycloak-operator_apply[count.index].resource
   override_namespace = local.keycloak-operator_apply[count.index].namespace
+
+  depends_on = [
+    kubectl_manifest.kubectl-operator-crd
+  ]
 }
 #data "kubectl_file_documents" "keycloak-operator" {
 #  count   = local.keycloak-operator.enabled ? 1 : 0
