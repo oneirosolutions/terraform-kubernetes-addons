@@ -42,7 +42,7 @@ data "kubectl_file_documents" "keycloak-operator" {
 }
 resource "kubectl_manifest" "keycloak-operator" {
   for_each = local.keycloak-operator.enabled ? toset(local.keycloak-operator.namespace) : []
-  yaml_body = data.kubectl_file_documents.keycloak-operator
+  yaml_body = data.kubectl_file_documents.keycloak-operator[0]
   override_namespace = each.key
 }
 #data "kubectl_file_documents" "keycloak-operator" {
