@@ -47,6 +47,9 @@ data "kubectl_file_documents" "keycloak-operator" {
   count = local.keycloak-operator.enabled ? 1 : 0
   content = data.http.keycloak-operator[0].body
 }
+output "keycloak-operator_apply" {
+  value = local.keycloak-operator_apply
+}
 resource "kubectl_manifest" "keycloak-operator" {
   for_each = local.keycloak-operator.enabled ? local.keycloak-operator_apply : []
   yaml_body = local.keycloak-operator_apply.resource
