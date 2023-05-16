@@ -24,12 +24,12 @@ locals {
 #  ] : null
 
 }
-data "http" "keycloak-operator-crd" {
+data "http" "keycloak-operator" {
   for_each = local.keycloak-operator.enabled ? toset(local.keycloak-operator-crd_yaml_files) : []
   url      = each.key
 }
-resource "kubectl_manifest" "keycloak-operator-crd" {
-  for_each  = local.keycloak-operator.enabled ? data.http.keycloak-operator-crd : {}
+resource "kubectl_manifest" "keycloak-operator" {
+  for_each  = local.keycloak-operator.enabled ? data.http.keycloak-operator : {}
   yaml_body = yamlencode(each.value)
 }
 #data "http" "keycloak-operator" {
