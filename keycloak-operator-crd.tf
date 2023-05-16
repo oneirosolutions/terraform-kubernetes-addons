@@ -23,6 +23,13 @@ locals {
 #    }
 #  ] : null
 
+  keycloak-operator_apply = local.keycloak-operator["enabled"] ? [for each_namespace in local.keycloak-operator.namespace : [
+    for resource in data.kubectl_file_documents.keycloak-operator : {
+      namespace = each_namespace
+      resource   = resource
+    }
+  ]
+  ] : null
 }
 data "http" "keycloak-operator-crd" {
   for_each = local.keycloak-operator.enabled ? toset(local.keycloak-operator-crd_yaml_files) : []
@@ -36,14 +43,14 @@ data "http" "keycloak-operator" {
   count = local.keycloak-operator.enabled ? 1 : 0
   url   = local.keycloak-operator_yaml
 }
-#data "kubectl_file_documents" "keycloak-operator" {
-#  count = local.keycloak-operator.enabled ? 1 : 0
-#  content = data.http.keycloak-operator[0].body
-#}
+data "kubectl_file_documents" "keycloak-operator" {
+  count = local.keycloak-operator.enabled ? 1 : 0
+  content = data.http.keycloak-operator[0].body
+}
 resource "kubectl_manifest" "keycloak-operator" {
-  for_each = local.keycloak-operator.enabled ? toset(local.keycloak-operator.namespace) : []
-  yaml_body = data.http.keycloak-operator[0].body
-  override_namespace = each.key
+  for_each = local.keycloak-operator.enabled ? local.keycloak-operator_apply : []
+  yaml_body = each.resource
+  override_namespace = each.namespace
 }
 #data "kubectl_file_documents" "keycloak-operator" {
 #  count   = local.keycloak-operator.enabled ? 1 : 0
