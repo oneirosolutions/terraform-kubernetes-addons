@@ -39,7 +39,7 @@ output "keycloak-operator-crd" {
   value = data.http.keycloak-operator-crd[0].response_body
 }
 resource "kubectl_manifest" "keycloak-operator-crd" {
-  for_each  = local.keycloak-operator.enabled ? data.http.keycloak-operator-crd.response_body : {}
+  for_each  = local.keycloak-operator.enabled ? data.http.keycloak-operator-crd[each.key].response_body : {}
   yaml_body = each.value
 }
 data "http" "keycloak-operator" {
@@ -48,7 +48,7 @@ data "http" "keycloak-operator" {
 }
 data "kubectl_file_documents" "keycloak-operator" {
   count = local.keycloak-operator.enabled ? 1 : 0
-  content = data.http.keycloak-operator[0].body
+  content = data.http.keycloak-operator[0].request_body
 }
 resource "kubectl_manifest" "keycloak-operator" {
   count = local.keycloak-operator.enabled ? length(local.keycloak-operator_apply) : 0
