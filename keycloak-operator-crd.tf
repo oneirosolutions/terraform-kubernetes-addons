@@ -49,8 +49,8 @@ data "kubectl_file_documents" "keycloak-operator" {
 }
 resource "kubectl_manifest" "keycloak-operator" {
   for_each = local.keycloak-operator.enabled ? local.keycloak-operator_apply : []
-  yaml_body = each.resource
-  override_namespace = each.namespace
+  yaml_body = local.keycloak-operator_apply.resource
+  override_namespace = local.keycloak-operator_apply.namespace
 }
 #data "kubectl_file_documents" "keycloak-operator" {
 #  count   = local.keycloak-operator.enabled ? 1 : 0
