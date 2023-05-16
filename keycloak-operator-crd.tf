@@ -29,7 +29,7 @@ data "http" "keycloak-operator-crd" {
   url      = each.key
 }
 resource "kubectl_manifest" "keycloak-operator-crd" {
-  for_each  = local.keycloak-operator.enabled ? data.http.keycloak-operator : []
+  for_each  = local.keycloak-operator.enabled ? data.http.keycloak-operator-crd : {}
   yaml_body = yamlencode(each.value)
 }
 data "http" "keycloak-operator" {
@@ -37,7 +37,7 @@ data "http" "keycloak-operator" {
   url   = local.keycloak-operator_yaml
 }
 resource "kubectl_manifest" "keycloak-operator" {
-  for_each = local.keycloak-operator.enabled ? local.keycloak-operator.namespace : []
+  for_each = local.keycloak-operator.enabled ? toset(local.keycloak-operator.namespace) : []
   yaml_body = yamlencode(data.http.keycloak-operator)
   override_namespace = each.key
 }
