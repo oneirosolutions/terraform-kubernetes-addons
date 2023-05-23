@@ -22,13 +22,6 @@ locals {
 #  ])
 }
 
-#resource "aws_api_gateway_vpc_link" "main" {
-# count = local.aws-api-gw["enabled"] ? 1 : 0
-# name = "api_gateway_vpclink"
-# description = "Api Gateway VPC Link. Managed by Terraform."
-# target_arns = [local.aws-api-gw.load_balancer_arn]
-#}
-
 resource "aws_api_gateway_rest_api" "main" {
  count = local.aws-api-gw["enabled"] ? 1 : 0
  name = local.aws-api-gw.api_gw_name
@@ -37,6 +30,58 @@ resource "aws_api_gateway_rest_api" "main" {
 #   types = ["REGIONAL"]
 # }
 }
+
+resource "aws_api_gateway_resource" "proxy" {
+  count = local.aws-api-gw["enabled"] ? 1 : 0
+  rest_api_id = aws_api_gateway_rest_api.main[count.index].id
+  parent_id   = aws_api_gateway_rest_api.main[count.index].root_resource_id
+  path_part   = "{proxy+}"
+}
+
+#resource "aws_api_gateway_method" "proxy" {
+#  count = local.aws-api-gw["enabled"] ? length(flatten(local.aws-api-gw.*.load_balancer_dns)) : 0
+#  rest_api_id   = aws_api_gateway_rest_api.main[count.index].id
+#  resource_id   = aws_api_gateway_resource.proxy[count.index].id
+#  http_method   = "ANY"
+#  authorization = "NONE"
+
+#  request_parameters = {
+#    "method.request.path.proxy"           = true
+#  }
+#}
+
+#resource "aws_api_gateway_integration" "proxy" {
+#  count = local.aws-api-gw["enabled"] ? length(flatten(local.aws-api-gw.*.load_balancer_dns)) : 0
+#  rest_api_id = aws_api_gateway_rest_api.main[count.index].id
+#  resource_id = aws_api_gateway_resource.proxy[count.index].id
+#  http_method = "ANY"
+
+#  integration_http_method = "ANY"
+#  type                    = "HTTP_PROXY"
+#  uri                     = "https://${flatten(local.aws-api-gw.*.load_balancer_dns)[count.index]}/{proxy}"
+#  passthrough_behavior    = "WHEN_NO_MATCH"
+#  content_handling        = "CONVERT_TO_TEXT"
+
+#  request_parameters = {
+#    "integration.request.path.proxy"           = "method.request.path.proxy"
+#  }
+
+#  connection_type = "VPC_LINK"
+#  connection_id   = aws_api_gateway_vpc_link.main[0].id
+#}
+
+
+
+
+
+
+
+#resource "aws_api_gateway_vpc_link" "main" {
+# count = local.aws-api-gw["enabled"] ? 1 : 0
+# name = "api_gateway_vpclink"
+# description = "Api Gateway VPC Link. Managed by Terraform."
+# target_arns = [local.aws-api-gw.load_balancer_arn]
+#}
 
 #resource "aws_api_gateway_method" "main_forward_slash" {
 #  count = local.aws-api-gw["enabled"] ? length(flatten(local.aws-api-gw.*.load_balancer_dns)) : 0
@@ -84,44 +129,7 @@ resource "aws_api_gateway_rest_api" "main" {
 #    depends_on = [aws_api_gateway_method.main_forward_slash]
 #}
 
-#resource "aws_api_gateway_resource" "proxy" {
-#  count = local.aws-api-gw["enabled"] ? length(flatten(local.aws-api-gw.*.load_balancer_dns)) : 0
-#  rest_api_id = aws_api_gateway_rest_api.main[count.index].id
-#  parent_id   = aws_api_gateway_rest_api.main[count.index].root_resource_id
-#  path_part   = "{proxy+}"
-#}
 
-#resource "aws_api_gateway_method" "proxy" {
-#  count = local.aws-api-gw["enabled"] ? length(flatten(local.aws-api-gw.*.load_balancer_dns)) : 0
-#  rest_api_id   = aws_api_gateway_rest_api.main[count.index].id
-#  resource_id   = aws_api_gateway_resource.proxy[count.index].id
-#  http_method   = "ANY"
-#  authorization = "NONE"
-
-#  request_parameters = {
-#    "method.request.path.proxy"           = true
-#  }
-#}
-
-#resource "aws_api_gateway_integration" "proxy" {
-#  count = local.aws-api-gw["enabled"] ? length(flatten(local.aws-api-gw.*.load_balancer_dns)) : 0
-#  rest_api_id = aws_api_gateway_rest_api.main[count.index].id
-#  resource_id = aws_api_gateway_resource.proxy[count.index].id
-#  http_method = "ANY"
-
-#  integration_http_method = "ANY"
-#  type                    = "HTTP_PROXY"
-#  uri                     = "https://${flatten(local.aws-api-gw.*.load_balancer_dns)[count.index]}/{proxy}"
-#  passthrough_behavior    = "WHEN_NO_MATCH"
-#  content_handling        = "CONVERT_TO_TEXT"
-
-#  request_parameters = {
-#    "integration.request.path.proxy"           = "method.request.path.proxy"
-#  }
-
-#  connection_type = "VPC_LINK"
-#  connection_id   = aws_api_gateway_vpc_link.main[0].id
-#}
 
 #resource "aws_api_gateway_method_response" "proxy" {
 #    count = local.aws-api-gw["enabled"] ? length(flatten(local.aws-api-gw.*.load_balancer_dns)) : 0
